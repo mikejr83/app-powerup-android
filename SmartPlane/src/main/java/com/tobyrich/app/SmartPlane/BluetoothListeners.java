@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tobyrich.app.SmartPlane.R;
+import com.tailortoys.app.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
 import com.tobyrich.app.SmartPlane.util.Util;
 

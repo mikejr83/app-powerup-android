@@ -48,10 +48,10 @@
 				<string>2a25</string>
 			</dict>
 		</dict>
-		<key>smartplane</key>
+		<key>powerup</key>
 		<dict>
 			<key>UUID</key>
-			<string>75b64e51-f171-4ed1-921a-476090d80ba7</string>
+			<string>86C3810E-F171-40D9-A117-26B300768CD6</string>
 			<key>Primary</key>
 			<true/>
 			<key>DriverClass</key>
@@ -59,13 +59,11 @@
 			<key>Fields</key>
 			<dict>
 				<key>engine</key>
-				<string>75b64e51-0010-4ed1-921a-476090d80ba7</string>
+				<string>86C3810E-0010-40D9-A117-26B300768CD6</string>
 				<key>rudder</key>
-				<string>75b64e51-0021-4ed1-921a-476090d80ba7</string>
-				<key>temperature</key>
-				<string>75b64e51-0030-4ed1-921a-476090d80ba7</string>
+				<string>86C3810E-0021-40D9-A117-26B300768CD6</string>
 				<key>chargestatus</key>
-				<string>75b64e51-0040-4ed1-921a-476090d80ba7</string>
+				<string>86C3810E-0040-40D9-A117-26B300768CD6</string>
 			</dict>
 		</dict>
 	</dict>

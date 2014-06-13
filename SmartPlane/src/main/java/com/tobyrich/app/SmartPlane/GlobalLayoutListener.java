@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
+import com.tailortoys.app.PowerUp.R;
+
 /**
  * Class in charge of maintaining the aspect ratio of the control panel
  */

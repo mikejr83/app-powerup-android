@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.media.MediaPlayer;
 import android.util.Log;
 
-
+import com.tailortoys.app.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
 import com.tobyrich.app.SmartPlane.util.InfoBox;
 import com.tobyrich.app.SmartPlane.util.Util;
@@ -18,8 +18,11 @@ import lib.smartlink.driver.BLEBatteryService;
 import lib.smartlink.driver.BLEDeviceInformationService;
 import lib.smartlink.driver.BLESmartplaneService;
 
-import static com.tobyrich.app.SmartPlane.BluetoothTasks.*;
-import static com.tobyrich.app.SmartPlane.BluetoothListeners.*;
+import static com.tobyrich.app.SmartPlane.BluetoothListeners.BatteryLevelUIChanger;
+import static com.tobyrich.app.SmartPlane.BluetoothListeners.ChargeStatusTextChanger;
+import static com.tobyrich.app.SmartPlane.BluetoothListeners.SignalLevelUIChanger;
+import static com.tobyrich.app.SmartPlane.BluetoothTasks.ChargeTimerTask;
+import static com.tobyrich.app.SmartPlane.BluetoothTasks.SignalTimerTask;
 
 /**
  * Class responsible for callbacks from bluetooth devices
@@ -94,7 +97,7 @@ public class BluetoothDelegate
         // We are no longer "searching" for the device
         Util.showSearching(activity, false);
 
-        if (serviceName.equalsIgnoreCase("smartplane") ||
+        if (serviceName.equalsIgnoreCase("powerup") ||
                 serviceName.equalsIgnoreCase("sml1test")) {
 
             smartplaneService = (BLESmartplaneService) service;

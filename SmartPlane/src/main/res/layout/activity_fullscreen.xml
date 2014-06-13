@@ -112,7 +112,7 @@
             android:layout_alignStart="@id/signalValue"
             android:layout_above="@id/imgSignalNeedle"
             android:layout_marginBottom="8dp"
-            android:layout_marginLeft="5dp" />
+            android:layout_marginLeft="12dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -185,12 +185,12 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:id="@+id/throttleCursor"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:src="@drawable/controller"
             android:adjustViewBounds="true"
             android:longClickable="false"
             android:baselineAlignBottom="false"
-            android:layout_marginBottom="5dp"
+            android:paddingLeft="20dp"
             android:layout_toLeftOf="@id/textSignal"
             android:layout_alignTop="@id/textSignal"
             android:layout_marginLeft="120dp"
@@ -206,8 +206,8 @@
             android:layout_alignEnd="@id/throttleValue"
             android:textSize="13sp"
             android:textStyle="bold|normal"
-            android:layout_marginRight="6dp"
-            android:layout_marginTop="-6dp"
+            android:layout_marginRight="14dp"
+            android:layout_marginTop="-4dp"
             android:text="@string/not_available" />
 
         <TextView
@@ -316,7 +316,7 @@
                 android:layout_gravity="left|top"
                 android:src="@drawable/rudder"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="30dp"
                 android:contentDescription="@string/desc_settings"/>
 
             <ImageView

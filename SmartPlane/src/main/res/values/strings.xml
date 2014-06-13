@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Constants -->
-    <string name="app_name">SmartPlane</string>
+    <string name="app_name">PowerUp</string>
     <string name="minus_infinity">-\u221E</string>
     <string name="horizon_limit">I am the last thing in horizon</string>
     <string name="not_available">N/A</string>

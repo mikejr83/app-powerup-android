@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.tobyrich.app.SmartPlane.R;
+import com.tailortoys.app.PowerUp.R;
 
 /**
  * @author Radu Hambasan
