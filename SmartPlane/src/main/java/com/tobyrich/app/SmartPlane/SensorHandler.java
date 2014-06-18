@@ -115,13 +115,14 @@ public class SensorHandler implements SensorEventListener {
 
         short newRudder = (short) (rollAngle * -Const.MAX_RUDDER_INPUT / Const.MAX_ROLL_ANGLE);
         if (planeState.isFlAssistEnabled()) {
+            // XXX: Note difference from SmartPlane app due to rotated motor
             // limit rudder for left turn
-            if (newRudder < 0) {
+            if (newRudder > 0) {
                 newRudder = (short) (newRudder * Const.SCALE_LEFT_RUDDER);
             }
             // cutoff if needed
-            if (newRudder < Const.SCALE_LEFT_RUDDER * -Const.MAX_RUDDER_INPUT) {
-                newRudder = (short) (Const.SCALE_LEFT_RUDDER * -Const.MAX_RUDDER_INPUT);
+            if (newRudder > Const.SCALE_LEFT_RUDDER * Const.MAX_RUDDER_INPUT) {
+                newRudder = (short) (Const.SCALE_LEFT_RUDDER * Const.MAX_RUDDER_INPUT);
             }
         }
         smartplaneService.setRudder(

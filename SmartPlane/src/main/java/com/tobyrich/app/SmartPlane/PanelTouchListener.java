@@ -70,10 +70,8 @@ public class PanelTouchListener implements View.OnTouchListener {
             return true;
         }
 
-        // Adjust if flight assist is on
-        if (planeState.isFlAssistEnabled()) {
-            motorSpeed *= Const.SCALE_FASSIST_THROTTLE;
-        }
+        // Adjust if flight assist is on is NOT needed in PowerUp
+        // Shai requested 100% throttle even in FlightAssist mode.
 
         planeState.setMotorSpeed(motorSpeed);
 
