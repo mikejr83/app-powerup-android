@@ -2,12 +2,12 @@ apply plugin: 'android'
 
 android {
     compileSdkVersion 18
-    buildToolsVersion "19.1.0"
+    buildToolsVersion '19.1.0'
 
     defaultConfig {
         minSdkVersion 18
-        versionCode 120
-        versionName "1.2-BETA"
+        versionCode 130
+        versionName '1.3-BETA'
     }
     buildTypes {
         release {
