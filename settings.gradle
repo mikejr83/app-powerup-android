@@ -1,1 +1,7 @@
-include ':SmartPlane'
+include 'PowerUp'
+
+ext {
+    smartPlaneDir = rootProject.getProjectDir().toString() + "/SmartPlane"
+}
+project(":PowerUp").setName("PowerUp")
+project(":PowerUp").setProjectDir(new File(smartPlaneDir))
