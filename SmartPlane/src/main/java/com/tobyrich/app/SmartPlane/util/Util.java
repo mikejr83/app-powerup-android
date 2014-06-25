@@ -102,8 +102,11 @@ public class Util {
                         Util.takePicture(activity);
                         break;
 
-                    case DialogInterface.BUTTON_NEGATIVE:
+                    case DialogInterface.BUTTON_NEUTRAL:
                         Util.socialShare(activity, null);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
                         break;
                 }
             }
@@ -113,9 +116,11 @@ public class Util {
         String shareWithPictureMessage = activity.getString(R.string.shareWithPictureMessage);
         String shareWithPictureYes = activity.getString(R.string.shareWithPictureYes);
         String shareWithPictureNo = activity.getString(R.string.shareWithPictureNo);
+        String shareWithPictureCancel = activity.getString(R.string.shareWithPictureCancel);
         builder.setMessage(shareWithPictureMessage)
                 .setPositiveButton(shareWithPictureYes, dialogClickListener)
-                .setNegativeButton(shareWithPictureNo, dialogClickListener).show();
+                .setNeutralButton(shareWithPictureNo, dialogClickListener)
+                .setNegativeButton(shareWithPictureCancel, dialogClickListener).show();
     }
 }
 
