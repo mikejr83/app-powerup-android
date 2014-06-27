@@ -75,6 +75,7 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
             slider.setEnabled(true);
             controlPanel.setEnabled(true);
             planeState.setScreenLock(false);
+            planeState.setMotorSpeed(0);
         }
 
         return true;
