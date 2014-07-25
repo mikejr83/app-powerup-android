@@ -50,9 +50,25 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+--------------------------------------------------------------------------------
 
+*The Navigation indicator is licensed by Patrik Akerfeldt and Jake Wharton
+under Apache License, Version 2.0. A copy of the Apache license, version 2.0
+can be found at:
+        
+        http://www.apache.org/licenses/LICENSE-2.0
 
+Changes made to the original project:
+ - Simplified project, and removed all indicators except CircleIndicator
+ - Removed numerous methods from CircleIndicator
+ - added an AudioManager field to the CircleIndicator
+
+<<<<<<< HEAD
 *All graphic assets are licensed by Tailor Toys LTD under the
+=======
+--------------------------------------------------------------------------------
+*All graphic assets are licensed by TobyRich GmbH under the
+>>>>>>> 24abf35ec2d93b1d82fe221946f33d491aeb982b
 Creative Commons Attribution-NonCommercial 4.0 International License. This
 specifies the following: 
 - You are free to: 

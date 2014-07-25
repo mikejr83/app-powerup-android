@@ -1,7 +1,3 @@
-include 'PowerUp'
+include ':SmartPlane', ':indicator-library'
+include ':library'
 
-ext {
-    smartPlaneDir = rootProject.getProjectDir().toString() + "/SmartPlane"
-}
-project(":PowerUp").setName("PowerUp")
-project(":PowerUp").setProjectDir(new File(smartPlaneDir))

@@ -30,17 +30,21 @@ package com.tobyrich.app.SmartPlane.util;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tailortoys.app.PowerUp.R;
-import com.tobyrich.app.SmartPlane.PlaneState;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 /**
  * @author Radu Hambasan
@@ -48,7 +52,7 @@ import com.tobyrich.app.SmartPlane.PlaneState;
  * Class which contains useful methods
  */
 public class Util {
-    private static final String TAG = "Util";
+    public static final int BT_REQUEST_CODE = 722;
     public static final int PHOTO_REQUEST_CODE = 723;
     public static final int SHARE_REQUEST_CODE = 724;
 
@@ -92,19 +96,17 @@ public class Util {
         activity.findViewById(R.id.txtSearching).post(new Runnable() {
             @Override
             public void run() {
-                activity.findViewById(R.id.txtSearching).setVisibility(visibility);
-            }
-        });
-        activity.findViewById(R.id.progressBar).post(new Runnable() {
-            @Override
-            public void run() {
-                activity.findViewById(R.id.progressBar).setVisibility(visibility);
+                TextView msgSearching = (TextView) activity.findViewById(R.id.txtSearching);
+                final String defaultSearchingMsg = activity.getString(R.string.label_searching);
+                msgSearching.setText(defaultSearchingMsg);
+                msgSearching.setVisibility(visibility);
+
+                activity.findViewById(R.id.searchProgressBar).setVisibility(visibility);
             }
         });
     }
 
     public static void takePicture(Activity activity) {
-        PlaneState planeState = (PlaneState) activity.getApplicationContext();
         photoUri = activity.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 new ContentValues());
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -153,6 +155,39 @@ public class Util {
                 .setPositiveButton(shareWithPictureYes, dialogClickListener)
                 .setNeutralButton(shareWithPictureNo, dialogClickListener)
                 .setNegativeButton(shareWithPictureCancel, dialogClickListener).show();
+    }
+
+    public static String readUrl(String url) {
+        BufferedReader reader = null;
+
+        try {
+            URL _url = new URL(url);
+            reader = new BufferedReader(new InputStreamReader(_url.openStream()));
+            StringBuilder buffer = new StringBuilder();
+            int nrRead;
+            char[] readChars = new char[1024];
+            while((nrRead = reader.read(readChars)) != -1) {
+                buffer.append(readChars, 0, nrRead);
+            }
+            return  buffer.toString();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }  // end readURL()
+
+    public static class BluetoothNotEnabledException extends Exception {
+        public BluetoothNotEnabledException(String msg) {
+            super(msg);
+        }
     }
 }
 
