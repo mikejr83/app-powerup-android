@@ -51,7 +51,7 @@ public class Const {
     /* don't let the cursor go below 80% of panel height */
     public static final float SCALE_FOR_CURSOR_RANGE = 0.8f;
     public static final float SCALE_FOR_VERT_MOVEMENT_HORIZON = 4.0f;
-    public static final float THROTTLE_NEEDLE_MAX_ANGLE = 48;  // in degrees
+    public static final float THROTTLE_NEEDLE_MAX_ANGLE = 40;  // in degrees
     public static final float THROTTLE_NEEDLE_MIN_ANGLE = -135;  // in degrees
     public static final float SIGNAL_NEEDLE_MIN_ANGLE = 0;  // in degrees
     public static final float SIGNAL_NEEDLE_MAX_ANGLE = 180;  // in degrees
