@@ -43,6 +43,8 @@ import com.tobyrich.app.SmartPlane.util.Const;
 import com.tobyrich.app.SmartPlane.util.SmoothingEngine;
 import com.tobyrich.app.SmartPlane.util.Util;
 
+import java.util.Vector;
+
 import lib.smartlink.driver.BLESmartplaneService;
 
 /**
@@ -59,7 +61,7 @@ public class SensorHandler implements SensorEventListener {
 
     private final String TAG = "SensorHandler";
     private PlaneState planeState;
-    private BluetoothDelegate bluetoothDelegate;
+    private Vector<BluetoothDelegate> bluetoothDelegates;
 
     private SensorManager sensorManager;
 
@@ -80,7 +82,8 @@ public class SensorHandler implements SensorEventListener {
     private float[] mGeomagnetic = new float[3];
 
     public SensorHandler(Activity activity, BluetoothDelegate bluetoothDelegate) {
-        this.bluetoothDelegate = bluetoothDelegate;
+        this.bluetoothDelegates = new Vector<BluetoothDelegate>();
+        this.bluetoothDelegates.add(bluetoothDelegate);
         planeState = (PlaneState) activity.getApplicationContext();
 
         /* The data set changes rapidly, so we need to set the views here,
@@ -102,6 +105,15 @@ public class SensorHandler implements SensorEventListener {
         mRotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         mAccelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+    }
+
+    public void addBluetoothDelegate(BluetoothDelegate bluetoothDelegate) {
+        Log.d(TAG, "SesnorHandler adding delegate: " + bluetoothDelegate.getIdName());
+        this.bluetoothDelegates.add(bluetoothDelegate);
+    }
+
+    public void removeBluetoothDelegate(BluetoothDelegate bluetoothDelegate) {
+        this.bluetoothDelegates.remove(bluetoothDelegate);
     }
 
     public void unregisterListener() {
@@ -150,28 +162,34 @@ public class SensorHandler implements SensorEventListener {
                 newRudder = (short) (Const.SCALE_LEFT_RUDDER * Const.MAX_RUDDER_INPUT);
             }
         }
-        @SuppressWarnings("SpellCheckingInspection")
-        BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
-        if (smartplaneService != null) {
-            smartplaneService.setRudder(
-                    (short) (planeState.rudderReversed ? -newRudder : newRudder)
-            );
-        }
-        horizonImage.setRotation(-rollAngle);
-        // Increase throttle when turning if flight assist is enabled
-        if (planeState.isFlAssistEnabled() && !planeState.screenLocked) {
-            double scaler = 1 - Math.cos(rollAngle * Math.PI/2 / Const.MAX_ROLL_ANGLE);
-            if (scaler > 0.3) {
-                scaler = 0.3;
-            }
-            planeState.setScaler(scaler);
 
-            float adjustedMotorSpeed = planeState.getAdjustedMotorSpeed();
-            Util.rotateImageView(throttleNeedle, adjustedMotorSpeed,
-                    Const.THROTTLE_NEEDLE_MIN_ANGLE, Const.THROTTLE_NEEDLE_MAX_ANGLE);
-            throttleText.setText((short) (adjustedMotorSpeed * 100) + "%");
+        for (BluetoothDelegate bluetoothDelegate : this.bluetoothDelegates) {
+            Log.v(TAG, "Setting rudder and motor for: " + bluetoothDelegate.getIdName());
+
+            @SuppressWarnings("SpellCheckingInspection")
+            BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
             if (smartplaneService != null) {
-                smartplaneService.setMotor((short) (adjustedMotorSpeed * Const.MAX_MOTOR_SPEED));
+                smartplaneService.setRudder(
+                        (short) (planeState.rudderReversed ? -newRudder : newRudder)
+                );
+            }
+
+            horizonImage.setRotation(-rollAngle);
+            // Increase throttle when turning if flight assist is enabled
+            if (planeState.isFlAssistEnabled() && !planeState.screenLocked) {
+                double scaler = 1 - Math.cos(rollAngle * Math.PI / 2 / Const.MAX_ROLL_ANGLE);
+                if (scaler > 0.3) {
+                    scaler = 0.3;
+                }
+                planeState.setScaler(scaler);
+
+                float adjustedMotorSpeed = planeState.getAdjustedMotorSpeed();
+                Util.rotateImageView(throttleNeedle, adjustedMotorSpeed,
+                        Const.THROTTLE_NEEDLE_MIN_ANGLE, Const.THROTTLE_NEEDLE_MAX_ANGLE);
+                throttleText.setText((short) (adjustedMotorSpeed * 100) + "%");
+                if (smartplaneService != null) {
+                    smartplaneService.setMotor((short) (adjustedMotorSpeed * Const.MAX_MOTOR_SPEED));
+                }
             }
         }
 
@@ -268,7 +286,7 @@ public class SensorHandler implements SensorEventListener {
             angles[2] = (float) (-Math.atan2(x, Math.sqrt(y * y + z * z)) * Const.TO_DEGREES);
 
             return angles;
-        } else if (mMagnetometerSensor != null){
+        } else if (mMagnetometerSensor != null) {
             switch (event.sensor.getType()) {
                 case Sensor.TYPE_ACCELEROMETER:
                     mGravity = safeValues;

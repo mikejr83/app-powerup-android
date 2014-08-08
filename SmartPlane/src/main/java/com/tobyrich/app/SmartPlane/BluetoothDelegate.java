@@ -65,13 +65,22 @@ public class BluetoothDelegate
     @SuppressWarnings("FieldCanBeLocal")
     private BLEBatteryService batteryService;
 
+    private WeakReference<OnFoundListener> listener;
+
     private PlaneState planeState;
     private Timer timer;
 
     private Activity activity;
+    private String idName;
 
-    public BluetoothDelegate(Activity activity) {
+    public String getIdName() {
+        return this.idName;
+    }
+
+    public BluetoothDelegate(Activity activity, String idName) {
         this.activity = activity;
+        this.idName = idName;
+
         this.planeState = (PlaneState) activity.getApplicationContext();
 
         try {
@@ -80,7 +89,7 @@ public class BluetoothDelegate
             device.delegate = new WeakReference<BluetoothDevice.Delegate>(this);
             device.automaticallyReconnect = true;
         } catch (IllegalArgumentException e) {
-            Log.wtf(TAG, "Could not create BluetoothDevice (maybe invalid plist?)");
+            Log.wtf(TAG, this.idName + " - Could not create BluetoothDevice (maybe invalid plist?)");
             e.printStackTrace();
         }
     }
@@ -91,6 +100,10 @@ public class BluetoothDelegate
 
     public void connect() throws BluetoothDisabledException {
         device.connect();
+    }
+
+    public void disconnect() {
+        device.disconnect();
     }
 
     @Override
@@ -108,6 +121,8 @@ public class BluetoothDelegate
     @Override
     public void didUpdateSerialNumber(BLEDeviceInformationService device, String serialNumber) {
         final String hardwareDataInfo = "Hardware: " + serialNumber;
+
+        Log.d(TAG, hardwareDataInfo);
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -118,7 +133,7 @@ public class BluetoothDelegate
 
     @Override
     public void didUpdateBatteryLevel(float percent) {
-        Log.i(TAG, "did update battery level");
+        Log.i(TAG, "did update battery level - " + this.idName);
         final float R_batt = 0.520f;  // Ohm
         /* 0.5 Amps is the current through the motor at MAX_MOTOR_SPEED */
         final float I_motor = (planeState.getAdjustedMotorSpeed() / Const.MAX_MOTOR_SPEED) * 0.5f;  // Amps
@@ -140,13 +155,21 @@ public class BluetoothDelegate
 
     @Override
     public void didStartService(BluetoothDevice device, String serviceName, BLEService service) {
-        Log.i(TAG, "did start service: " + service.toString());
+        Log.i(TAG, this.idName + " - did start service: " + service.toString());
+        Log.d(TAG, this.idName + " - service name: " + serviceName);
         // We are no longer "searching" for the device
-        Util.showSearching(activity, false);
+        Util.showSearching(activity, this.idName, false);
         Util.inform(activity, "Pull Up to Start the Motor");
+        Util.inform(activity, "Module " + idName + " is ready.");
 
         if (serviceName.equalsIgnoreCase("powerup") ||
                 serviceName.equalsIgnoreCase("sml1test")) {
+
+            if (this.listener != null) {
+                Log.d(TAG, "Informing the listener that " + this.idName + " has found a device. The next module can start connecting...");
+                OnFoundListener listener = this.listener.get();
+                if (listener != null) listener.onFound();
+            }
 
             smartplaneService = (BLESmartplaneService) service;
             smartplaneService.delegate = new WeakReference<BLESmartplaneService.Delegate>(this);
@@ -195,19 +218,19 @@ public class BluetoothDelegate
 
     @Override
     public void didStartScanning(BluetoothDevice device) {
-        Log.i(TAG, "started scanning");
-        Util.showSearching(activity, true);
+        Log.i(TAG, "started scanning - " + this.idName);
+        Util.showSearching(activity, this.idName, true);
     }
 
     @Override
     public void didStartConnectingTo(BluetoothDevice device, float signalStrength) {
-        Log.i(TAG, "did start connecting to " + device.toString());
+        Log.i(TAG, this.idName + " - did start connecting to " + device.toString());
         activity.runOnUiThread(new SearchingStatusChanger(activity));
     }
 
     @Override
     public void didDisconnect(BluetoothDevice device) {
-        Log.i(TAG, "did disconnect from" + device.toString());
+        Log.i(TAG, this.idName + " - did disconnect from" + device.toString());
         if (timer != null) {
             timer.cancel();
         }
@@ -224,7 +247,15 @@ public class BluetoothDelegate
                 ((TextView) activity.findViewById(R.id.hardwareInfoData)).setText(hardwareDataInfo);
             }
         });
-        Util.showSearching(activity, true);
+        Util.showSearching(activity, this.idName, true);
     }
 
+    public void setOnFoundListener(WeakReference<OnFoundListener> listener) {
+        this.listener = listener;
+    }
+
+    public interface OnFoundListener {
+        void onFound();
+
+    }
 }

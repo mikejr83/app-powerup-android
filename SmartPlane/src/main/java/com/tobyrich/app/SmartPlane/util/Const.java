@@ -80,5 +80,8 @@ public class Const {
     public static final boolean DEFAULT_FLIGHT_ASSIST = true;
     public static final boolean DEFAULT_RUDDER_REVERSE = false;
     public static final boolean DEFAULT_ATC_TOWER = true;
+    public static final boolean DEFAULT_MULTIPLE_MOD = false;
+    public static final String MODULE_ONE_NAME = "One";
+    public static final String MODULE_TWO_NAME = "Two";
 }
 
