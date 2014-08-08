@@ -53,11 +53,24 @@
             android:id="@+id/txtSearching"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:text="@string/label_searching"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#2b2b2b"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="90sp" />
+
+        <TextView
+            android:id="@+id/txtSearching2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_searching2"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#2b2b2b"
+            android:textSize="30sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="140sp"
+            android:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/searchProgressBar"
