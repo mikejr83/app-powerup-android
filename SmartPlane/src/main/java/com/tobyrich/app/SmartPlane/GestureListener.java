@@ -38,6 +38,8 @@ import com.tailortoys.app.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
 import com.tobyrich.app.SmartPlane.util.Util;
 
+import java.util.Vector;
+
 import lib.smartlink.driver.BLESmartplaneService;
 
 /**
@@ -48,15 +50,29 @@ import lib.smartlink.driver.BLESmartplaneService;
 
 public class GestureListener extends GestureDetector.SimpleOnGestureListener {
     private Activity activity;
-    private BluetoothDelegate bluetoothDelegate;
+    private Vector<BluetoothDelegate> bluetoothDelegates;
     private PlaneState planeState;
     private boolean tapped;
 
+    public GestureListener() {
+        this.bluetoothDelegates = new Vector<BluetoothDelegate>();
+    }
+
     public GestureListener(Activity activity, BluetoothDelegate bluetoothDelegate) {
+        this();
+
         this.activity = activity;
         planeState = (PlaneState) activity.getApplicationContext();
-        this.bluetoothDelegate = bluetoothDelegate;
+        this.bluetoothDelegates.add(bluetoothDelegate);
         tapped = false;
+    }
+
+    public void addBluetoothDelegate(BluetoothDelegate bluetoothDelegate) {
+        this.bluetoothDelegates.add(bluetoothDelegate);
+    }
+
+    public void removeBluetoothDelegate(BluetoothDelegate bluetoothDelegate) {
+        this.bluetoothDelegates.remove(bluetoothDelegate);
     }
 
     @Override
@@ -92,9 +108,11 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
             slider.setEnabled(false);
             controlPanel.setEnabled(false);
 
-            BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
-            if (smartplaneService != null) {
-                smartplaneService.setMotor((short) 0);
+            for (BluetoothDelegate bluetoothDelegate : this.bluetoothDelegates) {
+                BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
+                if (smartplaneService != null) {
+                    smartplaneService.setMotor((short) 0);
+                }
             }
             planeState.screenLocked = true;
         } else {

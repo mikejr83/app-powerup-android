@@ -60,6 +60,8 @@ import com.tobyrich.app.SmartPlane.util.MeteoTask;
 import com.tobyrich.app.SmartPlane.util.Util;
 import com.viewpagerindicator.CirclePageIndicator;
 
+import java.lang.ref.WeakReference;
+
 import lib.smartlink.BluetoothDisabledException;
 
 /**
@@ -80,9 +82,14 @@ public class FullscreenActivity extends Activity {
 
     // sound played when the user presses the "Control Tower" button
     private MediaPlayer atcSound;
+
     private BluetoothDelegate bluetoothDelegate;  // bluetooth events
+    private BluetoothDelegate bluetoothDelegate2;
+
     private SensorHandler sensorHandler;  // accelerometer & magnetometer
     private GestureDetector gestureDetector;  // touch events
+    private GestureListener gestureListener;
+
     private PlaneState planeState;  // singleton with variables used app-wide
 
     private AudioManager audioManager;
@@ -138,10 +145,21 @@ public class FullscreenActivity extends Activity {
                     try {
                         bluetoothDelegate.connect();
                     } catch (BluetoothDisabledException ex) {
-                        Log.wtf(TAG, "user enabled BT, but we still couldn't connect");
+                        Log.wtf(TAG, "ONE - user enabled BT, but we still couldn't connect");
                     }
                 } else {
-                    Log.e(TAG, "Bluetooth enabling was canceled by user");
+                    Log.e(TAG, "ONE - Bluetooth enabling was canceled by user");
+                }
+                return;
+            case Util.BT_REQUEST_CODE2:
+                if (resultCode == RESULT_OK) {
+                    try {
+                        bluetoothDelegate2.connect();
+                    } catch (BluetoothDisabledException ex) {
+                        Log.wtf(TAG, "TWO - user enabled BT, but we still couldn't connect");
+                    }
+                } else {
+                    Log.e(TAG, "TWO - Bluetooth enabling was canceled by user");
                 }
                 return;
             case Util.PHOTO_REQUEST_CODE:
@@ -184,7 +202,7 @@ public class FullscreenActivity extends Activity {
     }
 
     private void initializeMainScreen() {
-        bluetoothDelegate = new BluetoothDelegate(this);
+        bluetoothDelegate = new BluetoothDelegate(this, Const.MODULE_ONE_NAME);
         try {
             bluetoothDelegate.connect();
         } catch (BluetoothDisabledException ex) {
@@ -194,8 +212,9 @@ public class FullscreenActivity extends Activity {
         }
         sensorHandler = new SensorHandler(this, bluetoothDelegate);
         sensorHandler.registerListener();
-        gestureDetector = new GestureDetector(this,
-                new GestureListener(this, bluetoothDelegate));
+        gestureListener = new GestureListener(this, bluetoothDelegate);
+        gestureDetector = new GestureDetector(this, gestureListener);
+
         planeState = (PlaneState) getApplicationContext();
 
          /* setting the trivial listeners */
@@ -256,11 +275,11 @@ public class FullscreenActivity extends Activity {
                 // dismiss the dialog on touch
                 checklist.findViewById(R.id.checklist_linearlayout)
                         .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        checklist.dismiss();
-                    }
-                });
+                            @Override
+                            public void onClick(View v) {
+                                checklist.dismiss();
+                            }
+                        });
 
                 checklist.show();
             }
@@ -314,6 +333,8 @@ public class FullscreenActivity extends Activity {
         flAssistSwitch.setChecked(enableFlAssist);
 
         final Switch towerSwitch = (Switch) findViewById(R.id.towerSwitch);
+        final Switch multipleModSwitch = (Switch) findViewById(R.id.multipleModSwitch);
+
         towerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -342,9 +363,53 @@ public class FullscreenActivity extends Activity {
             }  // end onCheckedChanged()
         });
 
+        final Activity activity = this;
+        multipleModSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    bluetoothDelegate2 = new BluetoothDelegate(activity, Const.MODULE_TWO_NAME);
+
+                    bluetoothDelegate.setOnFoundListener(new WeakReference<BluetoothDelegate.OnFoundListener>(new BluetoothDelegate.OnFoundListener() {
+                        @Override
+                        public void onFound() {
+                            Log.d(TAG, "going to connect to the second bluetoothDelegate...");
+                            try {
+                                bluetoothDelegate2.connect();
+                            } catch (BluetoothDisabledException ex) {
+                                Intent enableBtIntent =
+                                        new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                startActivityForResult(enableBtIntent, Util.BT_REQUEST_CODE2);
+                            }
+
+                            sensorHandler.addBluetoothDelegate(bluetoothDelegate2);
+
+                            gestureListener.addBluetoothDelegate(bluetoothDelegate2);
+                        }
+                    }));
+
+                    TextView tv = (TextView) activity.findViewById(R.id.txtSearching2);
+                    tv.setVisibility(View.VISIBLE);
+                } else {
+                    Log.i(TAG, "I DON'T KNOW HOW TO DISABLE THE 2nd BLUETOOTH MODULE!!!");
+                    bluetoothDelegate2.disconnect();
+                    bluetoothDelegate2 = null;
+
+                    TextView tv = (TextView) activity.findViewById(R.id.txtSearching2);
+                    tv.setVisibility(View.GONE);
+                }
+                Log.d(TAG, "Multiple mod button changed: " + isChecked);
+                buttonConfig.edit().putBoolean("multipleMode", isChecked).apply();
+            }
+        });
+
         boolean enableAtcTower = buttonConfig.getBoolean("atcTower",
                 Const.DEFAULT_ATC_TOWER);
         towerSwitch.setChecked(enableAtcTower);
+
+        boolean enableMultipleMod = buttonConfig.getBoolean("multipleMod",
+                Const.DEFAULT_MULTIPLE_MOD);
+        multipleModSwitch.setChecked(enableMultipleMod);
 
     }  // end initializeSettintsScreen()
 

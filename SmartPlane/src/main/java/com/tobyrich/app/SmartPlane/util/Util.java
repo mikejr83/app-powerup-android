@@ -53,6 +53,7 @@ import java.net.URL;
  */
 public class Util {
     public static final int BT_REQUEST_CODE = 722;
+    public static final int BT_REQUEST_CODE2 = 725;
     public static final int PHOTO_REQUEST_CODE = 723;
     public static final int SHARE_REQUEST_CODE = 724;
 
@@ -61,8 +62,8 @@ public class Util {
 
     /**
      * @param activity the activity where we want to show the toast
-     * @param message the message that will be displayed
-     *                Display a toast to the user.
+     * @param message  the message that will be displayed
+     *                 Display a toast to the user.
      */
     public static void inform(final Activity activity, final String message) {
         activity.runOnUiThread(new Runnable() {
@@ -89,16 +90,20 @@ public class Util {
     /**
      * @param activity the activity where we want to show the message
      * @param show     true if we want to show the message, false if we want to hide it
-     * @brief          Displays or hide a message indicating that the app is searching for a bluetooth device
+     * @brief Displays or hide a message indicating that the app is searching for a bluetooth device
      */
-    public static void showSearching(final Activity activity, boolean show) {
+    public static void showSearching(final Activity activity, final String idName, boolean show) {
         final int visibility = show ? View.VISIBLE : View.GONE;
         activity.findViewById(R.id.txtSearching).post(new Runnable() {
             @Override
             public void run() {
-                TextView msgSearching = (TextView) activity.findViewById(R.id.txtSearching);
-                final String defaultSearchingMsg = activity.getString(R.string.label_searching);
-                msgSearching.setText(defaultSearchingMsg);
+                TextView msgSearching = null;
+                if (idName.equalsIgnoreCase(Const.MODULE_ONE_NAME))
+                    msgSearching = (TextView) activity.findViewById(R.id.txtSearching);
+                else
+                    msgSearching = (TextView) activity.findViewById(R.id.txtSearching2);
+//                final String defaultSearchingMsg = idName + " - " + activity.getString(R.string.label_searching);
+//                msgSearching.setText(defaultSearchingMsg);
                 msgSearching.setVisibility(visibility);
 
                 activity.findViewById(R.id.searchProgressBar).setVisibility(visibility);
@@ -166,10 +171,10 @@ public class Util {
             StringBuilder buffer = new StringBuilder();
             int nrRead;
             char[] readChars = new char[1024];
-            while((nrRead = reader.read(readChars)) != -1) {
+            while ((nrRead = reader.read(readChars)) != -1) {
                 buffer.append(readChars, 0, nrRead);
             }
-            return  buffer.toString();
+            return buffer.toString();
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
