@@ -50,29 +50,16 @@ import lib.smartlink.driver.BLESmartplaneService;
 
 public class GestureListener extends GestureDetector.SimpleOnGestureListener {
     private Activity activity;
-    private Vector<BluetoothDelegate> bluetoothDelegates;
     private PlaneState planeState;
     private boolean tapped;
+    private BluetoothDelegateCollection delegateCollection;
 
-    public GestureListener() {
-        this.bluetoothDelegates = new Vector<BluetoothDelegate>();
-    }
-
-    public GestureListener(Activity activity, BluetoothDelegate bluetoothDelegate) {
-        this();
+    public GestureListener(Activity activity, BluetoothDelegateCollection delegateCollection) {
+        this.delegateCollection = delegateCollection;
 
         this.activity = activity;
         planeState = (PlaneState) activity.getApplicationContext();
-        this.bluetoothDelegates.add(bluetoothDelegate);
         tapped = false;
-    }
-
-    public void addBluetoothDelegate(BluetoothDelegate bluetoothDelegate) {
-        this.bluetoothDelegates.add(bluetoothDelegate);
-    }
-
-    public void removeBluetoothDelegate(BluetoothDelegate bluetoothDelegate) {
-        this.bluetoothDelegates.remove(bluetoothDelegate);
     }
 
     @Override
@@ -108,7 +95,7 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
             slider.setEnabled(false);
             controlPanel.setEnabled(false);
 
-            for (BluetoothDelegate bluetoothDelegate : this.bluetoothDelegates) {
+            for (BluetoothDelegate bluetoothDelegate : this.delegateCollection) {
                 BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
                 if (smartplaneService != null) {
                     smartplaneService.setMotor((short) 0);

@@ -61,7 +61,8 @@ public class SensorHandler implements SensorEventListener {
 
     private final String TAG = "SensorHandler";
     private PlaneState planeState;
-    private Vector<BluetoothDelegate> bluetoothDelegates;
+
+    private BluetoothDelegateCollection delegateCollection;
 
     private SensorManager sensorManager;
 
@@ -81,9 +82,9 @@ public class SensorHandler implements SensorEventListener {
     private float[] mGravity = new float[3];
     private float[] mGeomagnetic = new float[3];
 
-    public SensorHandler(Activity activity, BluetoothDelegate bluetoothDelegate) {
-        this.bluetoothDelegates = new Vector<BluetoothDelegate>();
-        this.bluetoothDelegates.add(bluetoothDelegate);
+    public SensorHandler(Activity activity, BluetoothDelegateCollection delegateCollection) {
+        this.delegateCollection = delegateCollection;
+
         planeState = (PlaneState) activity.getApplicationContext();
 
         /* The data set changes rapidly, so we need to set the views here,
@@ -105,15 +106,6 @@ public class SensorHandler implements SensorEventListener {
         mRotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         mAccelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-    }
-
-    public void addBluetoothDelegate(BluetoothDelegate bluetoothDelegate) {
-        Log.d(TAG, "SesnorHandler adding delegate: " + bluetoothDelegate.getIdName());
-        this.bluetoothDelegates.add(bluetoothDelegate);
-    }
-
-    public void removeBluetoothDelegate(BluetoothDelegate bluetoothDelegate) {
-        this.bluetoothDelegates.remove(bluetoothDelegate);
     }
 
     public void unregisterListener() {
@@ -163,15 +155,44 @@ public class SensorHandler implements SensorEventListener {
             }
         }
 
-        for (BluetoothDelegate bluetoothDelegate : this.bluetoothDelegates) {
-            Log.v(TAG, "Setting rudder and motor for: " + bluetoothDelegate.getIdName());
+        /*
+        If we have both bluetooth delegates set, one for the left and one for the right then it can
+        be assumed that changes in the plane's yaw will be controlled mainly by the slowing of the
+        motor on the side of the plane in which the user wants the plane to turn.
+         */
+        float motorSpeed = planeState.getMotorSpeed();
+        if (this.delegateCollection.getLeftDelegate() != null &&
+                this.delegateCollection.getRightDelegate() != null) {
+            BLESmartplaneService leftService = this.delegateCollection.getLeftDelegate().getSmartplaneService();
+            BLESmartplaneService rightService = this.delegateCollection.getRightDelegate().getSmartplaneService();
 
+            /*
+            The side we tilt to should slow down.
+
+            If the newRudder value is less than 0 the top of the device is tilted to the left. Slow
+            that motor down (from the left service).
+
+            If the opposite case is true then slow the right motor as we're now turning to the
+            right.
+
+            In either case, make sure the service exists before doing anything.
+             */
+
+            float newMotorSpeed = motorSpeed / 90f;
+            if (leftService != null && newRudder < 0) {
+                leftService.setMotor((short) newMotorSpeed);
+            } else if (rightService != null && newRudder > 0) {
+                rightService.setMotor((short) newMotorSpeed);
+            }
+        }
+
+        for (BluetoothDelegate bluetoothDelegate : this.delegateCollection) {
             @SuppressWarnings("SpellCheckingInspection")
             BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
             if (smartplaneService != null) {
-                smartplaneService.setRudder(
-                        (short) (planeState.rudderReversed ? -newRudder : newRudder)
-                );
+                short rudderVal = (short) (planeState.rudderReversed ? -newRudder : newRudder);
+
+                smartplaneService.setRudder(rudderVal);
             }
 
             horizonImage.setRotation(-rollAngle);

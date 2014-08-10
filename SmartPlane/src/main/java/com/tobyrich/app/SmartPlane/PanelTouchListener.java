@@ -48,19 +48,19 @@ import lib.smartlink.driver.BLESmartplaneService;
 public class PanelTouchListener implements View.OnTouchListener {
     private Activity activity;
     private PlaneState planeState;
-    private BluetoothDelegate bluetoothDelegate;
+    private BluetoothDelegateCollection delegateCollection;
 
     ImageView slider;
     ImageView throttleNeedle;
     TextView throttleText;
 
     /* constant only for a specific device */
-   float maxCursorRange = -1;  // uninitialized
+    float maxCursorRange = -1;  // uninitialized
 
-    public PanelTouchListener(Activity activity, BluetoothDelegate bluetoothDelegate) {
+    public PanelTouchListener(Activity activity, BluetoothDelegateCollection delegateCollection) {
         this.activity = activity;
         this.planeState = (PlaneState) activity.getApplicationContext();
-        this.bluetoothDelegate = bluetoothDelegate;
+        this.delegateCollection = delegateCollection;
 
         slider = (ImageView) activity.findViewById(R.id.throttleCursor);
         throttleNeedle = (ImageView) activity.findViewById(R.id.imgThrottleNeedle);
@@ -115,13 +115,16 @@ public class PanelTouchListener implements View.OnTouchListener {
                 Const.THROTTLE_NEEDLE_MIN_ANGLE, Const.THROTTLE_NEEDLE_MAX_ANGLE);
         throttleText.setText((short) (adjustedMotorSpeed * 100) + "%");
 
-        BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
-        // The smartPlaneService might not be available
-        if (smartplaneService == null) {
-            return true;
+        for (BluetoothDelegate bluetoothDelegate : this.delegateCollection) {
+            BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
+            // The smartPlaneService might not be available
+            if (smartplaneService == null) continue;
+
+            smartplaneService.setMotor((short) (adjustedMotorSpeed * Const.MAX_MOTOR_SPEED));
+            // the event was digested, keep listening for touch events
         }
-        smartplaneService.setMotor((short) (adjustedMotorSpeed * Const.MAX_MOTOR_SPEED));
-        return true; // the event was digested, keep listening for touch events
+
+        return true;
     }
 
 }
