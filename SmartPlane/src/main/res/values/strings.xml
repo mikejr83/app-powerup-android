@@ -52,6 +52,10 @@
     <string name="label_settings">Settings</string>
     <string name="label_tower">ATC Tower</string>
     <string name="label_multipleMod">Use 2 Modules</string>
+    <string name="label_multiple_left_off">Bind Left</string>
+    <string name="label_multiple_left_on">Disconnect Left</string>
+    <string name="label_multiple_right_off">Bind Right</string>
+    <string name="label_multiple_right_on">Disconnect Right</string>
 
     <!-- Checklist items -->
     <string name="checklist_title">Flight checklist</string>

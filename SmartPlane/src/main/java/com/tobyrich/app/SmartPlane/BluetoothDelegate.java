@@ -65,7 +65,8 @@ public class BluetoothDelegate
     @SuppressWarnings("FieldCanBeLocal")
     private BLEBatteryService batteryService;
 
-    private WeakReference<OnFoundListener> listener;
+    private WeakReference<OnFoundListener> onFoundListener;
+    private WeakReference<OnDisconnectListener> onDisconnectListener;
 
     private PlaneState planeState;
     private Timer timer;
@@ -73,8 +74,14 @@ public class BluetoothDelegate
     private Activity activity;
     private String idName;
 
+    private boolean isConnected = false;
+
     public String getIdName() {
         return this.idName;
+    }
+
+    public boolean isConnected() {
+        return this.isConnected;
     }
 
     public BluetoothDelegate(Activity activity, String idName) {
@@ -104,6 +111,15 @@ public class BluetoothDelegate
 
     public void disconnect() {
         device.disconnect();
+    }
+
+    public void close() {
+        device.automaticallyReconnect = false;
+        device.disconnect();
+        device.delegate.clear();
+        device = null;
+        this.planeState = null;
+        this.activity = null;
     }
 
     @Override
@@ -159,17 +175,13 @@ public class BluetoothDelegate
         Log.d(TAG, this.idName + " - service name: " + serviceName);
         // We are no longer "searching" for the device
         Util.showSearching(activity, this.idName, false);
-        Util.inform(activity, "Pull Up to Start the Motor");
-        Util.inform(activity, "Module " + idName + " is ready.");
+
 
         if (serviceName.equalsIgnoreCase("powerup") ||
                 serviceName.equalsIgnoreCase("sml1test")) {
 
-            if (this.listener != null) {
-                Log.d(TAG, "Informing the listener that " + this.idName + " has found a device. The next module can start connecting...");
-                OnFoundListener listener = this.listener.get();
-                if (listener != null) listener.onFound();
-            }
+            Util.inform(activity, "Pull Up to Start the Motor");
+            Util.inform(activity, "Module " + idName + " is ready.");
 
             smartplaneService = (BLESmartplaneService) service;
             smartplaneService.delegate = new WeakReference<BLESmartplaneService.Delegate>(this);
@@ -181,6 +193,8 @@ public class BluetoothDelegate
                 timer = new Timer();
             }
 
+            this.isConnected = true;
+
             ChargeTimerTask chargeTimerTask = new ChargeTimerTask(smartplaneService);
             timer.scheduleAtFixedRate(chargeTimerTask, Const.TIMER_DELAY, Const.TIMER_PERIOD);
 
@@ -189,6 +203,7 @@ public class BluetoothDelegate
 
             SignalTimerTask sigTask = new SignalTimerTask(device);
             timer.scheduleAtFixedRate(sigTask, Const.TIMER_DELAY, Const.TIMER_PERIOD);
+            this.handle();
             return;
 
         }
@@ -196,14 +211,33 @@ public class BluetoothDelegate
         if (serviceName.equalsIgnoreCase("devinfo")) { // check for devinfo service
             deviceInfoService = (BLEDeviceInformationService) service;
             deviceInfoService.delegate = new WeakReference<BLEDeviceInformationService.Delegate>(this);
+            this.handle();
             return;
         }
 
         if (serviceName.equalsIgnoreCase("battery")) { // check for battery service
             batteryService = (BLEBatteryService) service;
             batteryService.delegate = new WeakReference<BLEBatteryService.Delegate>(this);
+            this.handle();
         }
 
+    }
+
+    void handle() {
+        if (smartplaneService == null || deviceInfoService == null || batteryService == null)
+            return;
+
+        if (this.onFoundListener != null) {
+            Log.d(TAG, "Informing the onFoundListener that " + this.idName + " has found a device. The next module can start connecting...");
+            OnFoundListener listener = this.onFoundListener.get();
+            if (listener != null) {
+                try {
+                    listener.onFound();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error trying to call onFound delegate.", e);
+                }
+            }
+        }
     }
 
     @Override
@@ -239,6 +273,7 @@ public class BluetoothDelegate
         smartplaneService = null;
         batteryService = null;
         deviceInfoService = null;
+        this.isConnected = false;
         // if the smartplane is disconnected, show hardware as "unknown"
         final String hardwareDataInfo = "Hardware: unknown";
         activity.runOnUiThread(new Runnable() {
@@ -248,14 +283,46 @@ public class BluetoothDelegate
             }
         });
         Util.showSearching(activity, this.idName, true);
+        /*
+        If there is a listener registered for disconnect get it and call the onDisconnect method.
+         */
+        if (this.onDisconnectListener != null) {
+            OnDisconnectListener listener = this.onDisconnectListener.get();
+            if (listener != null) {
+                Util.inform(activity, "Announcing disconnection...");
+                try {
+                    listener.onDisconnect();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error when calling disconnect delegate.", e);
+                }
+            }
+
+        }
     }
 
+    /**
+     * Register a listener for when the delegate connects to a BLESmartplaneService.
+     *
+     * @param listener Listener for onFound.
+     */
     public void setOnFoundListener(WeakReference<OnFoundListener> listener) {
-        this.listener = listener;
+        this.onFoundListener = listener;
+    }
+
+    /**
+     * Register a listener for when the delegate disconnects.
+     *
+     * @param listener
+     */
+    public void setOnDisconnectListener(WeakReference<OnDisconnectListener> listener) {
+        this.onDisconnectListener = listener;
     }
 
     public interface OnFoundListener {
         void onFound();
+    }
 
+    public interface OnDisconnectListener {
+        void onDisconnect();
     }
 }

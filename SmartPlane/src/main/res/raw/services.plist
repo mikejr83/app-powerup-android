@@ -5,7 +5,7 @@
 	<key>rssi high</key>
 	<integer>-5</integer>
 	<key>rssi low</key>
-	<integer>-55</integer>
+	<integer>-65</integer>
 	<key>Services</key>
 	<dict>
 		<key>sml1test</key>

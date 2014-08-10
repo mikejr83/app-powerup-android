@@ -53,6 +53,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.tailortoys.app.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
@@ -83,8 +84,7 @@ public class FullscreenActivity extends Activity {
     // sound played when the user presses the "Control Tower" button
     private MediaPlayer atcSound;
 
-    private BluetoothDelegate bluetoothDelegate;  // bluetooth events
-    private BluetoothDelegate bluetoothDelegate2;
+    private BluetoothDelegateCollection delegateCollection = new BluetoothDelegateCollection();
 
     private SensorHandler sensorHandler;  // accelerometer & magnetometer
     private GestureDetector gestureDetector;  // touch events
@@ -94,6 +94,7 @@ public class FullscreenActivity extends Activity {
 
     private AudioManager audioManager;
     private SharedPreferences buttonConfig;  // cached button configuration
+
 
     @Override
     public void onResume() {
@@ -143,7 +144,7 @@ public class FullscreenActivity extends Activity {
             case Util.BT_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     try {
-                        bluetoothDelegate.connect();
+                        this.delegateCollection.getLeftDelegate().connect();
                     } catch (BluetoothDisabledException ex) {
                         Log.wtf(TAG, "ONE - user enabled BT, but we still couldn't connect");
                     }
@@ -153,8 +154,10 @@ public class FullscreenActivity extends Activity {
                 return;
             case Util.BT_REQUEST_CODE2:
                 if (resultCode == RESULT_OK) {
+                    if (this.delegateCollection.getRightDelegate() == null)
+                        Log.wtf(TAG, "TWO - How can connect when I'm null?! - onActivityResult");
                     try {
-                        bluetoothDelegate2.connect();
+                        this.delegateCollection.getRightDelegate().connect();
                     } catch (BluetoothDisabledException ex) {
                         Log.wtf(TAG, "TWO - user enabled BT, but we still couldn't connect");
                     }
@@ -202,17 +205,18 @@ public class FullscreenActivity extends Activity {
     }
 
     private void initializeMainScreen() {
-        bluetoothDelegate = new BluetoothDelegate(this, Const.MODULE_ONE_NAME);
+        this.delegateCollection.setLeftDelegate(new BluetoothDelegate(this, Const.MODULE_ONE_NAME));
+
         try {
-            bluetoothDelegate.connect();
+            this.delegateCollection.getLeftDelegate().connect();
         } catch (BluetoothDisabledException ex) {
             Intent enableBtIntent =
                     new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, Util.BT_REQUEST_CODE);
         }
-        sensorHandler = new SensorHandler(this, bluetoothDelegate);
+        sensorHandler = new SensorHandler(this, this.delegateCollection);
         sensorHandler.registerListener();
-        gestureListener = new GestureListener(this, bluetoothDelegate);
+        gestureListener = new GestureListener(this, this.delegateCollection);
         gestureDetector = new GestureDetector(this, gestureListener);
 
         planeState = (PlaneState) getApplicationContext();
@@ -258,7 +262,7 @@ public class FullscreenActivity extends Activity {
 
         ImageView controlPanel = (ImageView) findViewById(R.id.imgPanel);
         controlPanel.setOnTouchListener(new PanelTouchListener(this,
-                bluetoothDelegate));
+                this.delegateCollection));
 
         final ImageView checklist_vw = (ImageView) findViewById(R.id.checklist);
         checklist_vw.setOnClickListener(new View.OnClickListener() {
@@ -364,44 +368,101 @@ public class FullscreenActivity extends Activity {
         });
 
         final Activity activity = this;
+        final ViewGroup multipleModButtonLayout = (ViewGroup) findViewById(R.id.multiple_mod_buttons_item);
         multipleModSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    bluetoothDelegate2 = new BluetoothDelegate(activity, Const.MODULE_TWO_NAME);
+                    multipleModButtonLayout.setVisibility(View.VISIBLE);
+                    Log.i(TAG, "Closing the bluetoothLeftModule.");
+                    delegateCollection.getLeftDelegate().close();
 
-                    bluetoothDelegate.setOnFoundListener(new WeakReference<BluetoothDelegate.OnFoundListener>(new BluetoothDelegate.OnFoundListener() {
+                    delegateCollection.removeDelegate(delegateCollection.getLeftDelegate());
+                } else {
+                    multipleModButtonLayout.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        final ToggleButton bindLeftBtn = (ToggleButton) findViewById(R.id.bindLeftButton);
+        final ToggleButton bindRightBtn = (ToggleButton) findViewById(R.id.bindRightButton);
+
+        BindingButtonChangeHandlers btnChngHndlrs = new BindingButtonChangeHandlers(this, this.delegateCollection);
+        bindLeftBtn.setOnCheckedChangeListener(btnChngHndlrs);
+        bindRightBtn.setOnCheckedChangeListener(btnChngHndlrs);
+
+            /*
+                if (isChecked) {
+                    bluetoothLeftModule.disconnect();
+
+                    bluetoothRightModule = new BluetoothDelegate(activity, Const.MODULE_TWO_NAME);
+                    bluetoothRightModule.setOnFoundListener(new WeakReference<BluetoothDelegate.OnFoundListener>(new BluetoothDelegate.OnFoundListener() {
                         @Override
                         public void onFound() {
-                            Log.d(TAG, "going to connect to the second bluetoothDelegate...");
+                            Util.inform(activity, "Module 2!");
+                            Log.i(TAG, "Module 2 has been found.");
+                        }
+                    }));
+
+                    bluetoothRightModule.setOnDisconnectListener(new WeakReference<BluetoothDelegate.OnDisconnectListener>(new BluetoothDelegate.OnDisconnectListener() {
+                        @Override
+                        public void onDisconnect() {
+                            Util.inform(activity, "Module 2 disconnected.");
+                        }
+                    }));
+
+                    bluetoothLeftModule.setOnFoundListener(new WeakReference<BluetoothDelegate.OnFoundListener>(new BluetoothDelegate.OnFoundListener() {
+                        @Override
+                        public void onFound() {
+                            Log.i(TAG, "going to connect to the second bluetoothLeftModule...");
+                            Util.inform(activity, "Connecting to second module.");
+
+                            ImageView controlPanel = (ImageView) findViewById(R.id.imgPanel);
+                            controlPanel.setOnTouchListener(new PanelTouchListener(activity,
+                                    bluetoothRightModule));
+
                             try {
-                                bluetoothDelegate2.connect();
+                                bluetoothRightModule.connect();
                             } catch (BluetoothDisabledException ex) {
+                                Log.w(TAG, "Bluetooth disabled.", ex);
                                 Intent enableBtIntent =
                                         new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                                 startActivityForResult(enableBtIntent, Util.BT_REQUEST_CODE2);
                             }
 
-                            sensorHandler.addBluetoothDelegate(bluetoothDelegate2);
+                            sensorHandler.addBluetoothDelegate(bluetoothRightModule);
 
-                            gestureListener.addBluetoothDelegate(bluetoothDelegate2);
+                            gestureListener.addBluetoothDelegate(bluetoothRightModule);
                         }
                     }));
+
+                    bluetoothLeftModule.setOnDisconnectListener(new WeakReference<BluetoothDelegate.OnDisconnectListener>(new BluetoothDelegate.OnDisconnectListener() {
+                        @Override
+                        public void onDisconnect() {
+                            Log.d(TAG, "main moduel has disconnected. disconnecting the second module.");
+                            bluetoothRightModule.disconnect();
+                        }
+                    }));
+
+                    try {
+                        bluetoothLeftModule.connect();
+                    } catch (Exception e) {
+                        Log.wtf("sigh", e);
+                    }
 
                     TextView tv = (TextView) activity.findViewById(R.id.txtSearching2);
                     tv.setVisibility(View.VISIBLE);
                 } else {
                     Log.i(TAG, "I DON'T KNOW HOW TO DISABLE THE 2nd BLUETOOTH MODULE!!!");
-                    bluetoothDelegate2.disconnect();
-                    bluetoothDelegate2 = null;
+                    bluetoothRightModule.disconnect();
+                    bluetoothRightModule = null;
 
                     TextView tv = (TextView) activity.findViewById(R.id.txtSearching2);
                     tv.setVisibility(View.GONE);
                 }
                 Log.d(TAG, "Multiple mod button changed: " + isChecked);
                 buttonConfig.edit().putBoolean("multipleMode", isChecked).apply();
-            }
-        });
+            */
 
         boolean enableAtcTower = buttonConfig.getBoolean("atcTower",
                 Const.DEFAULT_ATC_TOWER);
@@ -412,6 +473,7 @@ public class FullscreenActivity extends Activity {
         multipleModSwitch.setChecked(enableMultipleMod);
 
     }  // end initializeSettintsScreen()
+
 
     private class ScreenSlideAdapter extends PagerAdapter {
         @Override

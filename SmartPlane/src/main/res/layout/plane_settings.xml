@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:soundEffectsEnabled="true"/>
+            android:soundEffectsEnabled="true" />
     </RelativeLayout>
 
     <View
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:soundEffectsEnabled="true"/>
+            android:soundEffectsEnabled="true" />
     </RelativeLayout>
 
     <View
@@ -121,15 +121,15 @@
         android:background="#c0c0c0" />
 
     <RelativeLayout
-        android:id="@+id/multiplemod_setting_item"
+        android:id="@+id/multiple_mod_setting_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:layout_below="@+id/tower_multiple_line"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
+        android:layout_marginRight="10dp"
+        android:gravity="center_vertical">
 
-        <TextView
+    <TextView
             android:id="@+id/multipleModText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -142,6 +142,44 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:checked="false" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/multiple_mod_buttons_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/multiple_mod_setting_item"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:visibility="gone">
+
+        <ToggleButton
+            android:id="@+id/bindLeftButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:checked="false"
+            android:textOff="@string/label_multiple_left_off"
+            android:textOn="@string/label_multiple_left_on" />
+
+        <ToggleButton
+            android:id="@+id/bindRightButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/bindLeftButton"
+            android:checked="false"
+            android:textOff="@string/label_multiple_right_off"
+            android:textOn="@string/label_multiple_right_on" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/multiple_mod_rudder_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     </RelativeLayout>
 
     <RelativeLayout
