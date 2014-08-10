@@ -55,7 +55,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.tailortoys.app.PowerUp.R;
+import com.monstarmike.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
 import com.tobyrich.app.SmartPlane.util.MeteoTask;
 import com.tobyrich.app.SmartPlane.util.Util;
@@ -338,6 +338,7 @@ public class FullscreenActivity extends Activity {
 
         final Switch towerSwitch = (Switch) findViewById(R.id.towerSwitch);
         final Switch multipleModSwitch = (Switch) findViewById(R.id.multipleModSwitch);
+        final Switch motorsForRudderSwitch = (Switch) findViewById(R.id.multiple_mod_rudder_switch);
 
         towerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -369,20 +370,31 @@ public class FullscreenActivity extends Activity {
 
         final Activity activity = this;
         final ViewGroup multipleModButtonLayout = (ViewGroup) findViewById(R.id.multiple_mod_buttons_item);
+        final ViewGroup multipleModeRudderLayout = (ViewGroup) findViewById(R.id.multiple_mod_rudder_item);
         multipleModSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     multipleModButtonLayout.setVisibility(View.VISIBLE);
+                    multipleModeRudderLayout.setVisibility(View.VISIBLE);
                     Log.i(TAG, "Closing the bluetoothLeftModule.");
                     delegateCollection.getLeftDelegate().close();
 
                     delegateCollection.removeDelegate(delegateCollection.getLeftDelegate());
                 } else {
                     multipleModButtonLayout.setVisibility(View.GONE);
+                    multipleModeRudderLayout.setVisibility(View.GONE);
                 }
             }
         });
+
+        motorsForRudderSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                planeState.useMotorSpeedForRudder = b;
+            }
+        });
+
 
         final ToggleButton bindLeftBtn = (ToggleButton) findViewById(R.id.bindLeftButton);
         final ToggleButton bindRightBtn = (ToggleButton) findViewById(R.id.bindRightButton);

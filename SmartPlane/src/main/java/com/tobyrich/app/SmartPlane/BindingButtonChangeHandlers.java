@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.CompoundButton;
 
-import com.tailortoys.app.PowerUp.R;
+import com.monstarmike.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Util;
 
 import java.lang.ref.WeakReference;

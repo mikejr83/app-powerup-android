@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tailortoys.app.PowerUp.R;
+import com.monstarmike.PowerUp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -148,7 +148,7 @@ public class MeteoTask extends AsyncTask<Void, Void, MeteoData> {
                     "Weather forecast: " + result.weather_descr + "\n";
 
             String wind_txt = "W: " + result.wind_deg + "\u00b0 / " + result.wind_speed + "kmph";
-            String temp_txt = "T: " + result.temperature + "K / " +  celsius_temp + "\u2103";
+            String temp_txt = "T: " + result.temperature + "K / " + celsius_temp + "\u2103";
 
             TextView wind_txt_vw = (TextView) activity.findViewById(R.id.horizon_wind_txt);
             wind_txt_vw.setText(wind_txt);

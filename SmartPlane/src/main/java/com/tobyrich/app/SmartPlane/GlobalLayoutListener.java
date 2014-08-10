@@ -33,7 +33,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
-import com.tailortoys.app.PowerUp.R;
+import com.monstarmike.PowerUp.R;
 
 /**
  * Class in charge of maintaining the aspect ratio of the control panel
@@ -41,9 +41,10 @@ import com.tailortoys.app.PowerUp.R;
 public class GlobalLayoutListener implements ViewTreeObserver.OnGlobalLayoutListener {
     private Activity activity;
 
-    public GlobalLayoutListener (Activity activity) {
+    public GlobalLayoutListener(Activity activity) {
         this.activity = activity;
     }
+
     @Override
     public void onGlobalLayout() {
         ImageView imagePanel = (ImageView) activity.findViewById(R.id.imgPanel);
