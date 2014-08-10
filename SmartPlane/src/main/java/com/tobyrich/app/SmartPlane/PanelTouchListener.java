@@ -28,12 +28,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.tobyrich.app.SmartPlane;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tailortoys.app.PowerUp.R;
+import com.monstarmike.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
 import com.tobyrich.app.SmartPlane.util.Util;
 
@@ -46,6 +47,8 @@ import lib.smartlink.driver.BLESmartplaneService;
  */
 
 public class PanelTouchListener implements View.OnTouchListener {
+    public final static String TAG = "PanelTouchListener";
+
     private Activity activity;
     private PlaneState planeState;
     private BluetoothDelegateCollection delegateCollection;
@@ -115,12 +118,15 @@ public class PanelTouchListener implements View.OnTouchListener {
                 Const.THROTTLE_NEEDLE_MIN_ANGLE, Const.THROTTLE_NEEDLE_MAX_ANGLE);
         throttleText.setText((short) (adjustedMotorSpeed * 100) + "%");
 
+        short newMotorSpeed = (short) (adjustedMotorSpeed * Const.MAX_MOTOR_SPEED);
         for (BluetoothDelegate bluetoothDelegate : this.delegateCollection) {
+            Log.d(TAG, "Setting motor speed for " + bluetoothDelegate.getIdName() + ": " + newMotorSpeed);
+
             BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
             // The smartPlaneService might not be available
             if (smartplaneService == null) continue;
 
-            smartplaneService.setMotor((short) (adjustedMotorSpeed * Const.MAX_MOTOR_SPEED));
+            smartplaneService.setMotor(newMotorSpeed);
             // the event was digested, keep listening for touch events
         }
 

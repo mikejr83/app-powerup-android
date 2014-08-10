@@ -39,7 +39,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tailortoys.app.PowerUp.R;
+import com.monstarmike.PowerUp.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;

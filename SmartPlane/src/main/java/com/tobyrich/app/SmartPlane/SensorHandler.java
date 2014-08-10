@@ -38,7 +38,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tailortoys.app.PowerUp.R;
+import com.monstarmike.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
 import com.tobyrich.app.SmartPlane.util.SmoothingEngine;
 import com.tobyrich.app.SmartPlane.util.Util;
@@ -162,7 +162,8 @@ public class SensorHandler implements SensorEventListener {
          */
         float motorSpeed = planeState.getMotorSpeed();
         if (this.delegateCollection.getLeftDelegate() != null &&
-                this.delegateCollection.getRightDelegate() != null) {
+                this.delegateCollection.getRightDelegate() != null &&
+                planeState.useMotorSpeedForRudder) {
             BLESmartplaneService leftService = this.delegateCollection.getLeftDelegate().getSmartplaneService();
             BLESmartplaneService rightService = this.delegateCollection.getRightDelegate().getSmartplaneService();
 
@@ -178,10 +179,12 @@ public class SensorHandler implements SensorEventListener {
             In either case, make sure the service exists before doing anything.
              */
 
-            float newMotorSpeed = motorSpeed / 90f;
+            float newMotorSpeed = motorSpeed * (rollAngle / 90f);
             if (leftService != null && newRudder < 0) {
+                Log.v(TAG, "Current motor: " + motorSpeed + " - Motor speed left: " + newMotorSpeed);
                 leftService.setMotor((short) newMotorSpeed);
             } else if (rightService != null && newRudder > 0) {
+                Log.v(TAG, "Current motor: " + motorSpeed + " - Motor speed right: " + newMotorSpeed);
                 rightService.setMotor((short) newMotorSpeed);
             }
         }
