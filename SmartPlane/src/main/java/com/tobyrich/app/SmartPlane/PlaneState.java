@@ -34,14 +34,15 @@ import com.tobyrich.app.SmartPlane.util.Const;
 /**
  * @author Radu Hambasan
  * @date Jun 13 2014
- *
+ * <p/>
  * Singleton handling data shared at global level
  */
 
 /* TODO: define a better interface */
-public class PlaneState extends Application{
+public class PlaneState extends Application {
     public boolean rudderReversed = false;
     public boolean screenLocked = false;
+    public boolean useMotorSpeedForRudder = false;
 
     private float motorSpeed;
     private double scaler = 0;
@@ -69,8 +70,11 @@ public class PlaneState extends Application{
     public void setMotorSpeed(float motorSpeed) {
         this.motorSpeed = motorSpeed;
     }
+
     @SuppressWarnings("UnusedDeclaration")
-    public float getMotorSpeed() { return this.motorSpeed; }
+    public float getMotorSpeed() {
+        return this.motorSpeed;
+    }
 
     public void enableFlightAssist(boolean flAssistEnabled) {
         // Cutoff speed for flight assist

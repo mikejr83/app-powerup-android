@@ -32,7 +32,7 @@ import android.app.Activity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tailortoys.app.PowerUp.R;
+import com.monstarmike.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
 import com.tobyrich.app.SmartPlane.util.Util;
 

@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Constants -->
-    <string name="app_name">PowerUp</string>
+    <string name="app_name">PowerUp 3.1</string>
     <string name="minus_infinity">-\u221E</string>
     <string name="horizon_limit">I am the last thing in horizon</string>
     <string name="not_available">N/A</string>
@@ -57,12 +57,13 @@
     <string name="label_multiple_left_on">Disconnect Left</string>
     <string name="label_multiple_right_off">Bind Right</string>
     <string name="label_multiple_right_on">Disconnect Right</string>
+    <string name="label_multiple_mod_rudder">Control Yaw With Motor Speed</string>
 
     <!-- Checklist items -->
     <string name="checklist_title">Flight checklist</string>
     <string name="checklist_text">
     \ <u>BEFORE TAKEOFF</u>\n <!-- notice the \ at the beginning -->
-    Check Weather Center\n
+        Check Weather Center\n
     Other air traffic\n
     Turn on plane\n
     Connection established\n

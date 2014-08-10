@@ -133,7 +133,7 @@
         android:layout_marginRight="10dp"
         android:gravity="center_vertical">
 
-    <TextView
+        <TextView
             android:id="@+id/multipleModText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -182,8 +182,27 @@
     <RelativeLayout
         android:id="@+id/multiple_mod_rudder_item"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/multiple_mod_buttons_item"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:visibility="gone">
 
+        <TextView
+            android:id="@+id/multiple_mod_rudder_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_multiple_mod_rudder"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <Switch
+            android:id="@+id/multiple_mod_rudder_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:checked="false" />
     </RelativeLayout>
 
     <RelativeLayout
