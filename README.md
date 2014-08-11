@@ -1,11 +1,13 @@
 Tailor Toys PowerUp 3.0 app for Android
 =======================================
+MULTIPLE MODULE SUPPORT!
+========================
 
-This is the official Android app for the TailorToys PowerUp 3.0.
-It's a fork of TobyRich SmartPlane app.
+This is the ~~official~~ unofficial Android app for the TailorToys PowerUp 3.0 with multiple bluetooth module support.
+It's a fork of Tailor Toys app (a fork of TobyRich SmartPlane app).
 More information about the PowerUp 3.0 is available on http://poweruptoys.com/
 
-Project maintainer: Prashant Vaibhav <prashant.vaibhav@tobyrich.com> github username `pvaibhav`
+TailorToys Project maintainer: Prashant Vaibhav <prashant.vaibhav@tobyrich.com> github username `pvaibhav`
 
 Building
 ========
