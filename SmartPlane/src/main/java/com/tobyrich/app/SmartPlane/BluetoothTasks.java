@@ -34,24 +34,35 @@ import java.util.TimerTask;
 import lib.smartlink.BluetoothDevice;
 import lib.smartlink.driver.BLESmartplaneService;
 
-/*
+/**
  * Tasks that require bluetooth interaction
  */
 public class BluetoothTasks {
 
-
+    /**
+     * Task for updating single strength
+     */
     public static class SignalTimerTask extends TimerTask {
-        // We have to avoid circular references, i.e.: the bluetooth device will hold a reference
-        // to this activity and the activity will have a reference to the bluetooth device,
-        // so without WeakReferences, none would get garbage collected.
+        /*
+        We have to avoid circular references, i.e.: the bluetooth device will hold a reference
+        to this activity and the activity will have a reference to the bluetooth device,
+        so without WeakReferences, none would get garbage collected.
+         */
         WeakReference<BluetoothDevice> weakDevice;
 
+        /**
+         * Create a SignalTimerTask with a BluetoothDevice
+         *
+         * @param device device to use for updating signal strength
+         */
         public SignalTimerTask(BluetoothDevice device) {
             weakDevice = new WeakReference<BluetoothDevice>(device);
         }
 
         @Override
         public void run() {
+            if (!weakDevice.isEnqueued()) return;
+
             BluetoothDevice dev = weakDevice.get();
             if (dev != null) {
                 weakDevice.get().updateSignalStrength();
@@ -59,18 +70,32 @@ public class BluetoothTasks {
         }
     }
 
-    public static class ChargeTimerTask extends TimerTask { // subclass for passing service in timer
-        WeakReference<BLESmartplaneService> service; // using weakreference to BLESmartplaneService
+    /**
+     * Task for updating charging status
+     */
+    public static class ChargeTimerTask extends TimerTask {
+        /*
+        Using WeakReference to hold a reference to BLESmartplaneService for the same reasons as was
+        used for the SignalTimerTask.
+         */
+        WeakReference<BLESmartplaneService> service;
 
+        /**
+         * Create a ChargeTimerTask with a BLESmartplaneService
+         *
+         * @param service The smart plane service that will be used to update the charging status.
+         */
         public ChargeTimerTask(BLESmartplaneService service) {
             this.service = new WeakReference<BLESmartplaneService>(service);
         }
 
         @Override
         public void run() {
-            BLESmartplaneService serv = service.get();
-            if (serv != null) {
-                serv.updateChargingStatus();
+            if (!this.service.isEnqueued()) return;
+
+            BLESmartplaneService planeService = this.service.get();
+            if (planeService != null) {
+                planeService.updateChargingStatus();
             }
         }
     }

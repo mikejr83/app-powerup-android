@@ -14,7 +14,6 @@ import com.monstarmike.PowerUp.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.Map;
 
@@ -33,10 +32,10 @@ class MeteoData {
 }
 
 public class MeteoTask extends AsyncTask<Void, Void, MeteoData> {
+    final String BASE_FETCH_URL = "http://api.openweathermap.org/data/2.5/find?";
     @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "MeteoTask";
     private final Activity activity;
-    final String BASE_FETCH_URL = "http://api.openweathermap.org/data/2.5/find?";
 
     public MeteoTask(Activity activity) {
         this.activity = activity;
