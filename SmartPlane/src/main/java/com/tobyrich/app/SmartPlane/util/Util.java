@@ -92,8 +92,30 @@ public class Util {
      * @param show     true if we want to show the message, false if we want to hide it
      * @brief Displays or hide a message indicating that the app is searching for a bluetooth device
      */
+    public static void showSearching(final Activity activity, boolean show) {
+        final int visibility = show ? View.VISIBLE : View.GONE;
+        activity.findViewById(R.id.txtSearching).post(new Runnable() {
+            @Override
+            public void run() {
+                TextView msgSearching = (TextView) activity.findViewById(R.id.txtSearching);
+                final String defaultSearchingMsg = activity.getString(R.string.label_searching_no_modules);
+                msgSearching.setText(defaultSearchingMsg);
+                msgSearching.setVisibility(visibility);
+
+                activity.findViewById(R.id.searchProgressBar).setVisibility(visibility);
+            }
+        });
+    }
+
+    /**
+     * @param activity the activity where we want to show the message
+     * @param idName the id name of the module (One or Two)
+     * @param show     true if we want to show the message, false if we want to hide it
+     * @brief Displays or hide a message indicating that the app is searching for a bluetooth device
+     */
     public static void showSearching(final Activity activity, final String idName, boolean show) {
         final int visibility = show ? View.VISIBLE : View.GONE;
+
         activity.findViewById(R.id.txtSearching).post(new Runnable() {
             @Override
             public void run() {
@@ -102,8 +124,7 @@ public class Util {
                     msgSearching = (TextView) activity.findViewById(R.id.txtSearching);
                 else
                     msgSearching = (TextView) activity.findViewById(R.id.txtSearching2);
-//                final String defaultSearchingMsg = idName + " - " + activity.getString(R.string.label_searching);
-//                msgSearching.setText(defaultSearchingMsg);
+
                 msgSearching.setVisibility(visibility);
 
                 activity.findViewById(R.id.searchProgressBar).setVisibility(visibility);

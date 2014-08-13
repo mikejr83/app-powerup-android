@@ -46,8 +46,12 @@ import lib.smartlink.driver.BLEBatteryService;
 import lib.smartlink.driver.BLEDeviceInformationService;
 import lib.smartlink.driver.BLESmartplaneService;
 
-import static com.tobyrich.app.SmartPlane.BluetoothTasks.*;
-import static com.tobyrich.app.SmartPlane.UIChangers.*;
+import static com.tobyrich.app.SmartPlane.BluetoothTasks.ChargeTimerTask;
+import static com.tobyrich.app.SmartPlane.BluetoothTasks.SignalTimerTask;
+import static com.tobyrich.app.SmartPlane.UIChangers.BatteryLevelUIChanger;
+import static com.tobyrich.app.SmartPlane.UIChangers.ChargeStatusTextChanger;
+import static com.tobyrich.app.SmartPlane.UIChangers.SearchingStatusChanger;
+import static com.tobyrich.app.SmartPlane.UIChangers.SignalLevelUIChanger;
 
 /**
  * Class responsible for callbacks from bluetooth devices
@@ -76,14 +80,6 @@ public class BluetoothDelegate
 
     private boolean isConnected = false;
 
-    public String getIdName() {
-        return this.idName;
-    }
-
-    public boolean isConnected() {
-        return this.isConnected;
-    }
-
     public BluetoothDelegate(Activity activity, String idName) {
         this.activity = activity;
         this.idName = idName;
@@ -101,18 +97,37 @@ public class BluetoothDelegate
         }
     }
 
+    public String getIdName() {
+        return this.idName;
+    }
+
+    public boolean isConnected() {
+        return this.isConnected;
+    }
+
     public BLESmartplaneService getSmartplaneService() {
         return smartplaneService;
     }
 
+    /**
+     * Connects to the bluetooth device represented by this delegate.
+     *
+     * @throws BluetoothDisabledException
+     */
     public void connect() throws BluetoothDisabledException {
         device.connect();
     }
 
+    /**
+     * Disconnects from the bluetooth device represented by this delegate.
+     */
     public void disconnect() {
         device.disconnect();
     }
 
+    /**
+     * Closes the bluetooth device by disconnecting and clearing all delegates.
+     */
     public void close() {
         device.automaticallyReconnect = false;
         device.disconnect();
@@ -174,8 +189,12 @@ public class BluetoothDelegate
         Log.i(TAG, this.idName + " - did start service: " + service.toString());
         Log.d(TAG, this.idName + " - service name: " + serviceName);
         // We are no longer "searching" for the device
-        Util.showSearching(activity, this.idName, false);
 
+        if (this.planeState.isMultipleModulesEnabled()) {
+            Util.showSearching(activity, this.idName, false);
+        } else {
+            Util.showSearching(activity, false);
+        }
 
         if (serviceName.equalsIgnoreCase("powerup") ||
                 serviceName.equalsIgnoreCase("sml1test")) {
@@ -253,7 +272,11 @@ public class BluetoothDelegate
     @Override
     public void didStartScanning(BluetoothDevice device) {
         Log.i(TAG, "started scanning - " + this.idName);
-        Util.showSearching(activity, this.idName, true);
+        if (this.planeState.isMultipleModulesEnabled()) {
+            Util.showSearching(activity, this.idName, true);
+        } else {
+            Util.showSearching(activity, true);
+        }
     }
 
     @Override
@@ -282,7 +305,12 @@ public class BluetoothDelegate
                 ((TextView) activity.findViewById(R.id.hardwareInfoData)).setText(hardwareDataInfo);
             }
         });
-        Util.showSearching(activity, this.idName, true);
+        if (this.planeState.isMultipleModulesEnabled()) {
+            Util.showSearching(activity, this.idName, true);
+        } else {
+            Util.showSearching(activity, true);
+        }
+
         /*
         If there is a listener registered for disconnect get it and call the onDisconnect method.
          */
@@ -318,11 +346,23 @@ public class BluetoothDelegate
         this.onDisconnectListener = listener;
     }
 
+    /**
+     * Listener for the OnFound "event".
+     */
     public interface OnFoundListener {
+        /**
+         * Bluetooth device is found.
+         */
         void onFound();
     }
 
+    /**
+     * Listener for the OnDisconnect "event".
+     */
     public interface OnDisconnectListener {
+        /**
+         * Bluetooth device is disconnected.
+         */
         void onDisconnect();
     }
 }
