@@ -41,6 +41,11 @@ import com.monstarmike.PowerUp.R;
 public class GlobalLayoutListener implements ViewTreeObserver.OnGlobalLayoutListener {
     private Activity activity;
 
+    /**
+     * Creates a GlobalLayoutListener for a given activity's control panel.
+     *
+     * @param activity The activity which contains the control panel
+     */
     public GlobalLayoutListener(Activity activity) {
         this.activity = activity;
     }

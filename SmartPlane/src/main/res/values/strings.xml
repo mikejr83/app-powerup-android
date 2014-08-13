@@ -43,6 +43,7 @@
     <string name="label_battery">BATTERY</string>
     <string name="label_signalStrength">dBm</string>
     <string name="label_compass">HDG</string>
+    <string name="label_searching_no_modules">Searching&#8230;</string>
     <string name="label_searching">Searching for module 1&#8230;</string>
     <string name="label_searching2">Searching for module 2&#8230;</string>
     <string name="label_connecting">Connecting&#8230;</string>

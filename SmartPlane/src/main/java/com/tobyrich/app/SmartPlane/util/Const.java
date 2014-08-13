@@ -30,7 +30,7 @@ package com.tobyrich.app.SmartPlane.util;
 /**
  * @author Radu Hambasan
  * @date 07 Jul 2014
- *
+ * <p/>
  * <p/>
  * Wrapper class for constants that are app-relevant..
  */
@@ -83,5 +83,7 @@ public class Const {
     public static final boolean DEFAULT_MULTIPLE_MOD = false;
     public static final String MODULE_ONE_NAME = "One";
     public static final String MODULE_TWO_NAME = "Two";
+    /* Conversion for pitch to a percentage to be applied to motor speed */
+    public static final float ROLL_PERCENTAGE_CONVERSION = 80f;
 }
 

@@ -38,8 +38,6 @@ import com.monstarmike.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
 import com.tobyrich.app.SmartPlane.util.Util;
 
-import java.util.Vector;
-
 import lib.smartlink.driver.BLESmartplaneService;
 
 /**
@@ -91,22 +89,23 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
                     Const.THROTTLE_NEEDLE_MAX_ANGLE);
             throttleText.setText("0" + "%");
 
-            // turning the ontouch listener off
+            // turning the on-touch listener off
             slider.setEnabled(false);
             controlPanel.setEnabled(false);
 
             for (BluetoothDelegate bluetoothDelegate : this.delegateCollection) {
+                @SuppressWarnings("SpellCheckingInspection")
                 BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
                 if (smartplaneService != null) {
                     smartplaneService.setMotor((short) 0);
                 }
             }
-            planeState.screenLocked = true;
+            planeState.setScreenLocked(true);
         } else {
             throttleLock.setVisibility(View.INVISIBLE);
             slider.setEnabled(true);
             controlPanel.setEnabled(true);
-            planeState.screenLocked = false;
+            planeState.setScreenLocked(false);
             planeState.setMotorSpeed(0);
         }
 

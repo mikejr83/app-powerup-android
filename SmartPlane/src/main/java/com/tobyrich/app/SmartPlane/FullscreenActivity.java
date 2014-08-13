@@ -61,8 +61,6 @@ import com.tobyrich.app.SmartPlane.util.MeteoTask;
 import com.tobyrich.app.SmartPlane.util.Util;
 import com.viewpagerindicator.CirclePageIndicator;
 
-import java.lang.ref.WeakReference;
-
 import lib.smartlink.BluetoothDisabledException;
 
 /**
@@ -88,13 +86,11 @@ public class FullscreenActivity extends Activity {
 
     private SensorHandler sensorHandler;  // accelerometer & magnetometer
     private GestureDetector gestureDetector;  // touch events
-    private GestureListener gestureListener;
 
     private PlaneState planeState;  // singleton with variables used app-wide
 
     private AudioManager audioManager;
     private SharedPreferences buttonConfig;  // cached button configuration
-
 
     @Override
     public void onResume() {
@@ -130,6 +126,7 @@ public class FullscreenActivity extends Activity {
 
         CirclePageIndicator screenIndicator =
                 (CirclePageIndicator) findViewById(R.id.screenIndicator);
+
         screenIndicator.setViewPager(screenPager);
 
         screenPager.setCurrentItem(1);  // horizon screen
@@ -146,23 +143,23 @@ public class FullscreenActivity extends Activity {
                     try {
                         this.delegateCollection.getLeftDelegate().connect();
                     } catch (BluetoothDisabledException ex) {
-                        Log.wtf(TAG, "ONE - user enabled BT, but we still couldn't connect");
+                        Log.wtf(TAG, "Left - user enabled BT, but we still couldn't connect");
                     }
                 } else {
-                    Log.e(TAG, "ONE - Bluetooth enabling was canceled by user");
+                    Log.e(TAG, "Left - Bluetooth enabling was canceled by user");
                 }
                 return;
             case Util.BT_REQUEST_CODE2:
                 if (resultCode == RESULT_OK) {
                     if (this.delegateCollection.getRightDelegate() == null)
-                        Log.wtf(TAG, "TWO - How can connect when I'm null?! - onActivityResult");
+                        Log.wtf(TAG, "Right - How can connect when I'm null?! - onActivityResult");
                     try {
                         this.delegateCollection.getRightDelegate().connect();
                     } catch (BluetoothDisabledException ex) {
-                        Log.wtf(TAG, "TWO - user enabled BT, but we still couldn't connect");
+                        Log.wtf(TAG, "Right - user enabled BT, but we still couldn't connect");
                     }
                 } else {
-                    Log.e(TAG, "TWO - Bluetooth enabling was canceled by user");
+                    Log.e(TAG, "Right - Bluetooth enabling was canceled by user");
                 }
                 return;
             case Util.PHOTO_REQUEST_CODE:
@@ -216,7 +213,7 @@ public class FullscreenActivity extends Activity {
         }
         sensorHandler = new SensorHandler(this, this.delegateCollection);
         sensorHandler.registerListener();
-        gestureListener = new GestureListener(this, this.delegateCollection);
+        GestureListener gestureListener = new GestureListener(this, this.delegateCollection);
         gestureDetector = new GestureDetector(this, gestureListener);
 
         planeState = (PlaneState) getApplicationContext();
@@ -311,7 +308,7 @@ public class FullscreenActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, FX_VOLUME);
-                planeState.rudderReversed = isChecked;
+                planeState.setRudderReversed(isChecked);
 
                 buttonConfig.edit().putBoolean("rudderReversed", isChecked).apply();
             }
@@ -374,7 +371,11 @@ public class FullscreenActivity extends Activity {
         multipleModSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                planeState.setMultipleModulesEnabled(isChecked);
+
                 if (isChecked) {
+                    Util.inform(activity, "Turn on the left module then click the left bind button.");
+
                     multipleModButtonLayout.setVisibility(View.VISIBLE);
                     multipleModeRudderLayout.setVisibility(View.VISIBLE);
                     Log.i(TAG, "Closing the bluetoothLeftModule.");
@@ -391,10 +392,10 @@ public class FullscreenActivity extends Activity {
         motorsForRudderSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                planeState.useMotorSpeedForRudder = b;
+                Log.i(TAG, b ? "Enabling motor speed for rudder." : "Disabling motor speed for rudder.");
+                planeState.enableMotorSpeedForRudder(b);
             }
         });
-
 
         final ToggleButton bindLeftBtn = (ToggleButton) findViewById(R.id.bindLeftButton);
         final ToggleButton bindRightBtn = (ToggleButton) findViewById(R.id.bindRightButton);
@@ -402,79 +403,6 @@ public class FullscreenActivity extends Activity {
         BindingButtonChangeHandlers btnChngHndlrs = new BindingButtonChangeHandlers(this, this.delegateCollection);
         bindLeftBtn.setOnCheckedChangeListener(btnChngHndlrs);
         bindRightBtn.setOnCheckedChangeListener(btnChngHndlrs);
-
-            /*
-                if (isChecked) {
-                    bluetoothLeftModule.disconnect();
-
-                    bluetoothRightModule = new BluetoothDelegate(activity, Const.MODULE_TWO_NAME);
-                    bluetoothRightModule.setOnFoundListener(new WeakReference<BluetoothDelegate.OnFoundListener>(new BluetoothDelegate.OnFoundListener() {
-                        @Override
-                        public void onFound() {
-                            Util.inform(activity, "Module 2!");
-                            Log.i(TAG, "Module 2 has been found.");
-                        }
-                    }));
-
-                    bluetoothRightModule.setOnDisconnectListener(new WeakReference<BluetoothDelegate.OnDisconnectListener>(new BluetoothDelegate.OnDisconnectListener() {
-                        @Override
-                        public void onDisconnect() {
-                            Util.inform(activity, "Module 2 disconnected.");
-                        }
-                    }));
-
-                    bluetoothLeftModule.setOnFoundListener(new WeakReference<BluetoothDelegate.OnFoundListener>(new BluetoothDelegate.OnFoundListener() {
-                        @Override
-                        public void onFound() {
-                            Log.i(TAG, "going to connect to the second bluetoothLeftModule...");
-                            Util.inform(activity, "Connecting to second module.");
-
-                            ImageView controlPanel = (ImageView) findViewById(R.id.imgPanel);
-                            controlPanel.setOnTouchListener(new PanelTouchListener(activity,
-                                    bluetoothRightModule));
-
-                            try {
-                                bluetoothRightModule.connect();
-                            } catch (BluetoothDisabledException ex) {
-                                Log.w(TAG, "Bluetooth disabled.", ex);
-                                Intent enableBtIntent =
-                                        new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                                startActivityForResult(enableBtIntent, Util.BT_REQUEST_CODE2);
-                            }
-
-                            sensorHandler.addBluetoothDelegate(bluetoothRightModule);
-
-                            gestureListener.addBluetoothDelegate(bluetoothRightModule);
-                        }
-                    }));
-
-                    bluetoothLeftModule.setOnDisconnectListener(new WeakReference<BluetoothDelegate.OnDisconnectListener>(new BluetoothDelegate.OnDisconnectListener() {
-                        @Override
-                        public void onDisconnect() {
-                            Log.d(TAG, "main moduel has disconnected. disconnecting the second module.");
-                            bluetoothRightModule.disconnect();
-                        }
-                    }));
-
-                    try {
-                        bluetoothLeftModule.connect();
-                    } catch (Exception e) {
-                        Log.wtf("sigh", e);
-                    }
-
-                    TextView tv = (TextView) activity.findViewById(R.id.txtSearching2);
-                    tv.setVisibility(View.VISIBLE);
-                } else {
-                    Log.i(TAG, "I DON'T KNOW HOW TO DISABLE THE 2nd BLUETOOTH MODULE!!!");
-                    bluetoothRightModule.disconnect();
-                    bluetoothRightModule = null;
-
-                    TextView tv = (TextView) activity.findViewById(R.id.txtSearching2);
-                    tv.setVisibility(View.GONE);
-                }
-                Log.d(TAG, "Multiple mod button changed: " + isChecked);
-                buttonConfig.edit().putBoolean("multipleMode", isChecked).apply();
-            */
 
         boolean enableAtcTower = buttonConfig.getBoolean("atcTower",
                 Const.DEFAULT_ATC_TOWER);
@@ -485,7 +413,6 @@ public class FullscreenActivity extends Activity {
         multipleModSwitch.setChecked(enableMultipleMod);
 
     }  // end initializeSettintsScreen()
-
 
     private class ScreenSlideAdapter extends PagerAdapter {
         @Override

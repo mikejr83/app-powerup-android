@@ -40,13 +40,18 @@ import com.tobyrich.app.SmartPlane.util.Const;
 
 /* TODO: define a better interface */
 public class PlaneState extends Application {
-    public boolean rudderReversed = false;
-    public boolean screenLocked = false;
-    public boolean useMotorSpeedForRudder = false;
 
+    private boolean rudderReversed = false;
+    private boolean screenLocked = false;
+    private boolean useMotorSpeedForRudder = false;
+    private boolean multipleModulesEnabled = false;
     private float motorSpeed;
     private double scaler = 0;
     private boolean flAssistEnabled = false;
+
+    public double getScaler() {
+        return scaler;
+    }
 
     public void setScaler(double scaler) {
         this.scaler = scaler;
@@ -67,15 +72,102 @@ public class PlaneState extends Application {
         }
     }
 
-    public void setMotorSpeed(float motorSpeed) {
-        this.motorSpeed = motorSpeed;
+    /**
+     * Is the multiple modules feature enabled.
+     *
+     * @return true / false for multiple modules
+     */
+    public boolean isMultipleModulesEnabled() {
+        return multipleModulesEnabled;
     }
 
+    /**
+     * Set the multiple modules feature
+     *
+     * @param multipleModulesEnabled true / false for multiple modules
+     */
+    public void setMultipleModulesEnabled(boolean multipleModulesEnabled) {
+        this.multipleModulesEnabled = multipleModulesEnabled;
+    }
+
+    /**
+     * Gets whether the rudder should be reversed
+     *
+     * @return true / false for reversing the rudder
+     */
+    public boolean isRudderReversed() {
+        return rudderReversed;
+    }
+
+    /**
+     * Sets whether the rudder should be reversed.
+     *
+     * @param rudderReversed true / false for reversing the rudder
+     */
+    public void setRudderReversed(boolean rudderReversed) {
+        this.rudderReversed = rudderReversed;
+    }
+
+    /**
+     * Gets whether or not the screen is locked
+     *
+     * @return true / false for the screen being locked
+     */
+    public boolean isScreenLocked() {
+        return screenLocked;
+    }
+
+    /**
+     * Sets whether or not the screen is locked
+     *
+     * @param screenLocked true / false for the screen being locked
+     */
+    public void setScreenLocked(boolean screenLocked) {
+        this.screenLocked = screenLocked;
+    }
+
+    /**
+     * Gets whether to use the multi-modules to control yaw as a rudder
+     *
+     * @return true / false for using the motors for yaw control
+     */
+    public boolean isMotorSpeedUsedForRudder() {
+        return useMotorSpeedForRudder;
+    }
+
+    /**
+     * Sets whether to use the multi-modules to control yaw as a rudder
+     *
+     * @param useMotorSpeedForRudder true / false for using the motors for yaw control
+     */
+    public void enableMotorSpeedForRudder(boolean useMotorSpeedForRudder) {
+        this.useMotorSpeedForRudder = useMotorSpeedForRudder;
+    }
+
+    /**
+     * Gets the the current motor speed
+     *
+     * @return Motor speed
+     */
     @SuppressWarnings("UnusedDeclaration")
     public float getMotorSpeed() {
         return this.motorSpeed;
     }
 
+    /**
+     * Sets the state of the motor's speed.
+     *
+     * @param motorSpeed Speed of motor 0 - 255.
+     */
+    public void setMotorSpeed(float motorSpeed) {
+        this.motorSpeed = motorSpeed;
+    }
+
+    /**
+     * Enable or disable flight assistance
+     *
+     * @param flAssistEnabled true / false for setting flight assistance
+     */
     public void enableFlightAssist(boolean flAssistEnabled) {
         // Cutoff speed for flight assist
         if (!this.flAssistEnabled && motorSpeed > Const.SCALE_FASSIST_THROTTLE) {
@@ -84,6 +176,11 @@ public class PlaneState extends Application {
         this.flAssistEnabled = flAssistEnabled;
     }
 
+    /**
+     * Check for flight assist enabled.
+     *
+     * @return true / false for flight assist
+     */
     public boolean isFlAssistEnabled() {
         return this.flAssistEnabled;
     }

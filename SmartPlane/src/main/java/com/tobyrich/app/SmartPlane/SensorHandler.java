@@ -43,8 +43,6 @@ import com.tobyrich.app.SmartPlane.util.Const;
 import com.tobyrich.app.SmartPlane.util.SmoothingEngine;
 import com.tobyrich.app.SmartPlane.util.Util;
 
-import java.util.Vector;
-
 import lib.smartlink.driver.BLESmartplaneService;
 
 /**
@@ -60,24 +58,19 @@ import lib.smartlink.driver.BLESmartplaneService;
 public class SensorHandler implements SensorEventListener {
 
     private final String TAG = "SensorHandler";
+    SmoothingEngine smoothingEngine = new SmoothingEngine();
     private PlaneState planeState;
-
     private BluetoothDelegateCollection delegateCollection;
-
     private SensorManager sensorManager;
-
     private Sensor mRotationSensor;
     private Sensor mAccelerometerSensor;
     private Sensor mMagnetometerSensor;
-
     private TextView hdgVal;
     private TextView throttleText;
     private ImageView throttleNeedle;
     private ImageView compass;
     private ImageView horizonImage;
     private ImageView centralRudder;
-
-    SmoothingEngine smoothingEngine = new SmoothingEngine();
     // data that needs to be available across multiple calls
     private float[] mGravity = new float[3];
     private float[] mGeomagnetic = new float[3];
@@ -163,7 +156,7 @@ public class SensorHandler implements SensorEventListener {
         float motorSpeed = planeState.getMotorSpeed();
         if (this.delegateCollection.getLeftDelegate() != null &&
                 this.delegateCollection.getRightDelegate() != null &&
-                planeState.useMotorSpeedForRudder) {
+                planeState.isMotorSpeedUsedForRudder()) {
             BLESmartplaneService leftService = this.delegateCollection.getLeftDelegate().getSmartplaneService();
             BLESmartplaneService rightService = this.delegateCollection.getRightDelegate().getSmartplaneService();
 
@@ -179,7 +172,7 @@ public class SensorHandler implements SensorEventListener {
             In either case, make sure the service exists before doing anything.
              */
 
-            float newMotorSpeed = motorSpeed * (rollAngle / 90f);
+            float newMotorSpeed = motorSpeed * (rollAngle / Const.ROLL_PERCENTAGE_CONVERSION);
             if (leftService != null && newRudder < 0) {
                 Log.v(TAG, "Current motor: " + motorSpeed + " - Motor speed left: " + newMotorSpeed);
                 leftService.setMotor((short) newMotorSpeed);
@@ -193,14 +186,14 @@ public class SensorHandler implements SensorEventListener {
             @SuppressWarnings("SpellCheckingInspection")
             BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
             if (smartplaneService != null) {
-                short rudderVal = (short) (planeState.rudderReversed ? -newRudder : newRudder);
+                short rudderVal = (short) (planeState.isRudderReversed() ? -newRudder : newRudder);
 
                 smartplaneService.setRudder(rudderVal);
             }
 
             horizonImage.setRotation(-rollAngle);
             // Increase throttle when turning if flight assist is enabled
-            if (planeState.isFlAssistEnabled() && !planeState.screenLocked) {
+            if (planeState.isFlAssistEnabled() && !planeState.isScreenLocked()) {
                 double scaler = 1 - Math.cos(rollAngle * Math.PI / 2 / Const.MAX_ROLL_ANGLE);
                 if (scaler > 0.3) {
                     scaler = 0.3;

@@ -48,17 +48,14 @@ import lib.smartlink.driver.BLESmartplaneService;
 
 public class PanelTouchListener implements View.OnTouchListener {
     public final static String TAG = "PanelTouchListener";
-
-    private Activity activity;
-    private PlaneState planeState;
-    private BluetoothDelegateCollection delegateCollection;
-
     ImageView slider;
     ImageView throttleNeedle;
     TextView throttleText;
-
     /* constant only for a specific device */
     float maxCursorRange = -1;  // uninitialized
+    private Activity activity;
+    private PlaneState planeState;
+    private BluetoothDelegateCollection delegateCollection;
 
     public PanelTouchListener(Activity activity, BluetoothDelegateCollection delegateCollection) {
         this.activity = activity;
@@ -122,6 +119,7 @@ public class PanelTouchListener implements View.OnTouchListener {
         for (BluetoothDelegate bluetoothDelegate : this.delegateCollection) {
             Log.d(TAG, "Setting motor speed for " + bluetoothDelegate.getIdName() + ": " + newMotorSpeed);
 
+            @SuppressWarnings("SpellCheckingInspection")
             BLESmartplaneService smartplaneService = bluetoothDelegate.getSmartplaneService();
             // The smartPlaneService might not be available
             if (smartplaneService == null) continue;
