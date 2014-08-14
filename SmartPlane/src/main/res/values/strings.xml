@@ -14,7 +14,7 @@
     <string name="shareWithPictureCancel">Cancel</string>
     <string name="social_share_success">Sharing successful.</string>
     <string name="social_share_picture_problem">Error while taking picture.</string>
-    <string name="social_share_title"> </string>
+    <string name="social_share_title"></string>
     <string name="info_softwareData">Software: unknown</string>
     <string name="info_hardwareData">Hardware: unknown</string>
     <string name="unknown">unknown</string>
@@ -43,10 +43,10 @@
     <string name="label_battery">BATTERY</string>
     <string name="label_signalStrength">dBm</string>
     <string name="label_compass">HDG</string>
-    <string name="label_searching_no_modules">Searching&#8230;</string>
-    <string name="label_searching">Searching for module 1&#8230;</string>
-    <string name="label_searching2">Searching for module 2&#8230;</string>
-    <string name="label_connecting">Connecting&#8230;</string>
+    <string name="label_searching_no_modules">Searching…</string>
+    <string name="label_searching">Searching for module 1…</string>
+    <string name="label_searching2">Searching for module 2…</string>
+    <string name="label_connecting">Connecting…</string>
     <string name="label_revRudder">Reverse Rudder</string>
     <string name="label_flightAssist">Flight Assist</string>
     <string name="label_weatherCenter">Weather Center</string>
@@ -58,11 +58,16 @@
     <string name="label_multiple_right_off">Bind Right</string>
     <string name="label_multiple_right_on">Disconnect Right</string>
     <string name="label_multiple_mod_rudder">Control Yaw With Motor Speed</string>
+    <string name="label_diagnostics">Diagnostics</string>
+    <string name="label_diag_roll_text">Roll</string>
+    <string name="label_diag_pitch_text">Pitch</string>
+    <string name="label_diag_azimuth_text">Azimuth</string>
+    <string name="label_diag_left_motor">Left Motor</string>
+    <string name="label_diag_right_motor">Right Motor</string>
 
     <!-- Checklist items -->
     <string name="checklist_title">Flight checklist</string>
-    <string name="checklist_text">
-    \ <u>BEFORE TAKEOFF</u>\n <!-- notice the \ at the beginning -->
+    <string name="checklist_text">    \ <u>BEFORE TAKEOFF</u>\n  <!-- notice the \ at the beginning -->
         Check Weather Center\n
     Other air traffic\n
     Turn on plane\n
@@ -70,15 +75,14 @@
     Rudder left/right\n
     Throttle check\n
     Check fuel\n
-    Tower on/off\n\n
-    <u>AFTER LANDING</u>\n
+    Tower on/off\n\n <u>AFTER LANDING</u>\n
     Check fuel\n
-    Turn off plane\n\n
-    <u>CHARGING / RE-FUELING</u>\n
+    Turn off plane\n\n <u>CHARGING / RE-FUELING</u>\n
     Turn on plane\n
     Plug in cable\n
-    Check LED\n
-    </string>
-
+    Check LED\n</string>
+    <string name="title_activity_diagnostics">Diagnostics</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

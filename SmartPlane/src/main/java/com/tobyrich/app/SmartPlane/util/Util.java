@@ -109,7 +109,7 @@ public class Util {
 
     /**
      * @param activity the activity where we want to show the message
-     * @param idName the id name of the module (One or Two)
+     * @param idName   the id name of the module (One or Two)
      * @param show     true if we want to show the message, false if we want to hide it
      * @brief Displays or hide a message indicating that the app is searching for a bluetooth device
      */
@@ -128,6 +128,68 @@ public class Util {
                 msgSearching.setVisibility(visibility);
 
                 activity.findViewById(R.id.searchProgressBar).setVisibility(visibility);
+            }
+        });
+    }
+
+    public static void showSensorDiagnostics(final Activity activity, final float[] values) {
+        activity.findViewById(R.id.diag_azimuth_val_txt).post(new Runnable() {
+            @Override
+            public void run() {
+                TextView msgText = (TextView) activity.findViewById(R.id.diag_azimuth_val_txt);
+                msgText.setText(new Float(values[0]).toString());
+            }
+        });
+
+        activity.findViewById(R.id.diag_pitch_val_txt).post(new Runnable() {
+            @Override
+            public void run() {
+                TextView msgText = (TextView) activity.findViewById(R.id.diag_pitch_val_txt);
+                msgText.setText(new Float(values[1]).toString());
+            }
+        });
+
+        activity.findViewById(R.id.diag_roll_val_txt).post(new Runnable() {
+            @Override
+            public void run() {
+                TextView msgText = (TextView) activity.findViewById(R.id.diag_roll_val_txt);
+                msgText.setText(new Float(values[2]).toString());
+            }
+        });
+    }
+
+    public static void showMotorDiagnostics(final Activity activity, final float motorSpeed) {
+        activity.findViewById(R.id.diag_left_motor_val_txt).post(new Runnable() {
+            @Override
+            public void run() {
+                TextView msgText = (TextView) activity.findViewById(R.id.diag_left_motor_val_txt);
+                msgText.setText(new Float(motorSpeed).toString());
+            }
+        });
+
+        activity.findViewById(R.id.diag_right_motor_val_txt).post(new Runnable() {
+            @Override
+            public void run() {
+                TextView msgText = (TextView) activity.findViewById(R.id.diag_right_motor_val_txt);
+                msgText.setText("");
+            }
+        });
+    }
+
+    public static void showMotorDiagnostics(final Activity activity, final float leftMotorSpeed, final float rightMotorSpeed) {
+        activity.findViewById(R.id.diag_left_motor_val_txt).post(new Runnable() {
+            @Override
+            public void run() {
+                TextView msgText = (TextView) activity.findViewById(R.id.diag_left_motor_val_txt);
+                msgText.setText(new Float(leftMotorSpeed).toString());
+            }
+        });
+
+        activity.findViewById(R.id.diag_right_motor_val_txt).post(new Runnable() {
+            @Override
+            public void run() {
+                TextView msgText = (TextView) activity.findViewById(R.id.diag_right_motor_val_txt);
+                msgText.setText(new Float(rightMotorSpeed).toString());
             }
         });
     }
