@@ -75,9 +75,9 @@ import lib.smartlink.BluetoothDisabledException;
 public class FullscreenActivity extends Activity {
     private static final String TAG = "FullscreenActivity";
     @SuppressWarnings("FieldCanBeLocal")
-    private static final int NUM_SCREENS = 3;
+    private static final int NUM_SCREENS = 4;
 
-    private boolean[] initializedScreen = {false, false, false};
+    private boolean[] initializedScreen = {false, false, false, false};
 
     // sound played when the user presses the "Control Tower" button
     private MediaPlayer atcSound;
@@ -414,6 +414,10 @@ public class FullscreenActivity extends Activity {
 
     }  // end initializeSettintsScreen()
 
+    protected void initializeDiagnosticsScreen() {
+
+    }
+
     private class ScreenSlideAdapter extends PagerAdapter {
         @Override
         public int getCount() {
@@ -434,6 +438,9 @@ public class FullscreenActivity extends Activity {
                     break;
                 case 2:
                     layout_id = R.layout.plane_settings;
+                    break;
+                case 3:
+                    layout_id = R.layout.activity_diagnostics;
                     break;
             }
             @SuppressWarnings("ResourceType")
@@ -459,6 +466,13 @@ public class FullscreenActivity extends Activity {
                         initializedScreen[2] = true;
                         initializeSettingsScreen();
                         Log.i(TAG, "initializing settings screen");
+                    }
+                    break;
+                case 3:
+                    if (!initializedScreen[3]) {
+                        initializedScreen[3] = true;
+                        initializeDiagnosticsScreen();
+                        Log.i(TAG, "initializing diagnostics screen");
                     }
                     break;
             }

@@ -75,8 +75,12 @@ public class SensorHandler implements SensorEventListener {
     private float[] mGravity = new float[3];
     private float[] mGeomagnetic = new float[3];
 
+    private Activity activity;
+
     public SensorHandler(Activity activity, BluetoothDelegateCollection delegateCollection) {
         this.delegateCollection = delegateCollection;
+
+        this.activity = activity;
 
         planeState = (PlaneState) activity.getApplicationContext();
 
@@ -135,6 +139,8 @@ public class SensorHandler implements SensorEventListener {
         float pitchAngle = angles[1];
         float rollAngle = angles[2];
 
+        Util.showSensorDiagnostics(this.activity, angles);
+
         short newRudder = (short) (rollAngle * -Const.MAX_RUDDER_INPUT / Const.MAX_ROLL_ANGLE);
         if (planeState.isFlAssistEnabled()) {
             // XXX: Note difference from SmartPlane app due to rotated motor
@@ -148,17 +154,27 @@ public class SensorHandler implements SensorEventListener {
             }
         }
 
-        /*
-        If we have both bluetooth delegates set, one for the left and one for the right then it can
-        be assumed that changes in the plane's yaw will be controlled mainly by the slowing of the
-        motor on the side of the plane in which the user wants the plane to turn.
-         */
-        float motorSpeed = planeState.getMotorSpeed();
-        if (this.delegateCollection.getLeftDelegate() != null &&
-                this.delegateCollection.getRightDelegate() != null &&
-                planeState.isMotorSpeedUsedForRudder()) {
-            BLESmartplaneService leftService = this.delegateCollection.getLeftDelegate().getSmartplaneService();
-            BLESmartplaneService rightService = this.delegateCollection.getRightDelegate().getSmartplaneService();
+        if (this.planeState.isMultipleModulesEnabled()) {
+            float motorSpeed = planeState.getAdjustedMotorSpeed() * Const.MAX_MOTOR_SPEED;
+
+            if (newRudder < 0) {
+                float newMotorSpeed = motorSpeed - (motorSpeed * (rollAngle / Const.ROLL_PERCENTAGE_CONVERSION));
+                Util.showMotorDiagnostics(activity, motorSpeed, newMotorSpeed);
+            } else if (newRudder > 0) {
+                float newMotorSpeed = motorSpeed + (motorSpeed * (rollAngle / Const.ROLL_PERCENTAGE_CONVERSION));
+                Util.showMotorDiagnostics(activity, newMotorSpeed, motorSpeed);
+            }
+
+            /*
+            If we have both bluetooth delegates set, one for the left and one for the right then it can
+            be assumed that changes in the plane's yaw will be controlled mainly by the slowing of the
+            motor on the side of the plane in which the user wants the plane to turn.
+             */
+            if (this.delegateCollection.getLeftDelegate() != null &&
+                    this.delegateCollection.getRightDelegate() != null &&
+                    planeState.isMotorSpeedUsedForRudder()) {
+                BLESmartplaneService leftService = this.delegateCollection.getLeftDelegate().getSmartplaneService();
+                BLESmartplaneService rightService = this.delegateCollection.getRightDelegate().getSmartplaneService();
 
             /*
             The side we tilt to should slow down.
@@ -172,15 +188,27 @@ public class SensorHandler implements SensorEventListener {
             In either case, make sure the service exists before doing anything.
              */
 
-            float newMotorSpeed = motorSpeed * (rollAngle / Const.ROLL_PERCENTAGE_CONVERSION);
-            if (leftService != null && newRudder < 0) {
-                Log.v(TAG, "Current motor: " + motorSpeed + " - Motor speed left: " + newMotorSpeed);
-                leftService.setMotor((short) newMotorSpeed);
-            } else if (rightService != null && newRudder > 0) {
-                Log.v(TAG, "Current motor: " + motorSpeed + " - Motor speed right: " + newMotorSpeed);
-                rightService.setMotor((short) newMotorSpeed);
+
+                if (newRudder < 0) {
+                    float newMotorSpeed = motorSpeed - (motorSpeed * (rollAngle / Const.ROLL_PERCENTAGE_CONVERSION));
+                    Log.v(TAG, "Current motor: " + motorSpeed + " - Motor speed left: " + newMotorSpeed);
+                    if (leftService != null)
+                        leftService.setMotor((short) motorSpeed);
+                    if (rightService != null)
+                        rightService.setMotor((short) newMotorSpeed);
+                } else if (newRudder > 0) {
+                    float newMotorSpeed = motorSpeed + (motorSpeed * (rollAngle / Const.ROLL_PERCENTAGE_CONVERSION));
+                    Log.v(TAG, "Current motor: " + motorSpeed + " - Motor speed right: " + newMotorSpeed);
+                    if (leftService != null)
+                        leftService.setMotor((short) newMotorSpeed);
+                    if (rightService != null)
+                        rightService.setMotor((short) motorSpeed);
+                }
             }
+        } else {
+            Util.showMotorDiagnostics(this.activity, planeState.getMotorSpeed());
         }
+
 
         for (BluetoothDelegate bluetoothDelegate : this.delegateCollection) {
             @SuppressWarnings("SpellCheckingInspection")
@@ -193,7 +221,8 @@ public class SensorHandler implements SensorEventListener {
 
             horizonImage.setRotation(-rollAngle);
             // Increase throttle when turning if flight assist is enabled
-            if (planeState.isFlAssistEnabled() && !planeState.isScreenLocked()) {
+            if (planeState.isFlAssistEnabled() && !planeState.isScreenLocked() &&
+                    !(planeState.isMotorSpeedUsedForRudder() || planeState.isMultipleModulesEnabled())) {
                 double scaler = 1 - Math.cos(rollAngle * Math.PI / 2 / Const.MAX_ROLL_ANGLE);
                 if (scaler > 0.3) {
                     scaler = 0.3;
