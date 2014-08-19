@@ -3,15 +3,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="15dp"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:padding="15dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="40dp"
         android:text="@string/label_weatherCenter"
         android:textSize="30sp" />
 
@@ -19,11 +20,11 @@
         android:id="@+id/weather_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textColor="@color/dark_green"
         android:layout_marginTop="20dp"
         android:lineSpacingMultiplier="1.5"
         android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/dark_green"
+        android:textSize="20sp"
         android:visibility="gone" />
 
     <ProgressBar

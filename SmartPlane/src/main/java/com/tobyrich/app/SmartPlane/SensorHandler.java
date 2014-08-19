@@ -139,7 +139,8 @@ public class SensorHandler implements SensorEventListener {
         float pitchAngle = angles[1];
         float rollAngle = angles[2];
 
-        Util.showSensorDiagnostics(this.activity, angles);
+        if (this.activity != null)
+            Util.showSensorDiagnostics(this.activity, angles);
 
         short newRudder = (short) (rollAngle * -Const.MAX_RUDDER_INPUT / Const.MAX_ROLL_ANGLE);
         if (planeState.isFlAssistEnabled()) {
@@ -206,7 +207,7 @@ public class SensorHandler implements SensorEventListener {
                 }
             }
         } else {
-            Util.showMotorDiagnostics(this.activity, planeState.getMotorSpeed());
+            Util.showMotorDiagnostics(this.activity, planeState.getAdjustedMotorSpeed() * Const.MAX_MOTOR_SPEED);
         }
 
 
