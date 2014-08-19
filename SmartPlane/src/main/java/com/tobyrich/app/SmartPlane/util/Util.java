@@ -133,65 +133,85 @@ public class Util {
     }
 
     public static void showSensorDiagnostics(final Activity activity, final float[] values) {
-        activity.findViewById(R.id.diag_azimuth_val_txt).post(new Runnable() {
-            @Override
-            public void run() {
-                TextView msgText = (TextView) activity.findViewById(R.id.diag_azimuth_val_txt);
-                msgText.setText(new Float(values[0]).toString());
-            }
-        });
+        if (activity == null) return;
 
-        activity.findViewById(R.id.diag_pitch_val_txt).post(new Runnable() {
-            @Override
-            public void run() {
-                TextView msgText = (TextView) activity.findViewById(R.id.diag_pitch_val_txt);
-                msgText.setText(new Float(values[1]).toString());
-            }
-        });
+        if (activity.findViewById(R.id.diag_azimuth_val_txt) != null)
+            activity.findViewById(R.id.diag_azimuth_val_txt).post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView msgText = (TextView) activity.findViewById(R.id.diag_azimuth_val_txt);
+                    if (msgText != null)
+                        msgText.setText(String.format("%.2f\u00B0", values[0]));
+                }
+            });
 
-        activity.findViewById(R.id.diag_roll_val_txt).post(new Runnable() {
-            @Override
-            public void run() {
-                TextView msgText = (TextView) activity.findViewById(R.id.diag_roll_val_txt);
-                msgText.setText(new Float(values[2]).toString());
-            }
-        });
+        if (activity.findViewById(R.id.diag_pitch_val_txt) != null)
+            activity.findViewById(R.id.diag_pitch_val_txt).post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView msgText = (TextView) activity.findViewById(R.id.diag_pitch_val_txt);
+                    if (msgText != null)
+                        msgText.setText(String.format("%.2f\u00B0", values[1]));
+                }
+            });
+
+        if (activity.findViewById(R.id.diag_roll_val_txt) != null)
+            activity.findViewById(R.id.diag_roll_val_txt).post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView msgText = (TextView) activity.findViewById(R.id.diag_roll_val_txt);
+                    if (msgText != null)
+                        msgText.setText(String.format("%.2f\u00B0", values[2]));
+                }
+            });
     }
 
     public static void showMotorDiagnostics(final Activity activity, final float motorSpeed) {
-        activity.findViewById(R.id.diag_left_motor_val_txt).post(new Runnable() {
-            @Override
-            public void run() {
-                TextView msgText = (TextView) activity.findViewById(R.id.diag_left_motor_val_txt);
-                msgText.setText(new Float(motorSpeed).toString());
-            }
-        });
+        if (activity == null) return;
 
-        activity.findViewById(R.id.diag_right_motor_val_txt).post(new Runnable() {
-            @Override
-            public void run() {
-                TextView msgText = (TextView) activity.findViewById(R.id.diag_right_motor_val_txt);
-                msgText.setText("");
-            }
-        });
+        if (activity.findViewById(R.id.diag_left_motor_val_txt) != null)
+            activity.findViewById(R.id.diag_left_motor_val_txt).post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView msgText = (TextView) activity.findViewById(R.id.diag_left_motor_val_txt);
+                    if (msgText != null)
+                        msgText.setText(String.format("%.2f", motorSpeed));
+                }
+            });
+
+        if (activity.findViewById(R.id.diag_right_motor_val_txt) != null)
+            activity.findViewById(R.id.diag_right_motor_val_txt).post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView msgText = (TextView) activity.findViewById(R.id.diag_right_motor_val_txt);
+                    if (msgText != null)
+                        msgText.setText("");
+                }
+            });
     }
 
     public static void showMotorDiagnostics(final Activity activity, final float leftMotorSpeed, final float rightMotorSpeed) {
-        activity.findViewById(R.id.diag_left_motor_val_txt).post(new Runnable() {
-            @Override
-            public void run() {
-                TextView msgText = (TextView) activity.findViewById(R.id.diag_left_motor_val_txt);
-                msgText.setText(new Float(leftMotorSpeed).toString());
-            }
-        });
+        if (activity == null) return;
 
-        activity.findViewById(R.id.diag_right_motor_val_txt).post(new Runnable() {
-            @Override
-            public void run() {
-                TextView msgText = (TextView) activity.findViewById(R.id.diag_right_motor_val_txt);
-                msgText.setText(new Float(rightMotorSpeed).toString());
-            }
-        });
+        if (activity.findViewById(R.id.diag_left_motor_val_txt) != null)
+            activity.findViewById(R.id.diag_left_motor_val_txt).post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView msgText = (TextView) activity.findViewById(R.id.diag_left_motor_val_txt);
+                    if (msgText != null)
+                        msgText.setText(String.format("%.2f", leftMotorSpeed));
+                }
+            });
+
+        if (activity.findViewById(R.id.diag_right_motor_val_txt) != null)
+            activity.findViewById(R.id.diag_right_motor_val_txt).post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView msgText = (TextView) activity.findViewById(R.id.diag_right_motor_val_txt);
+                    if (msgText != null)
+                        msgText.setText(String.format("%.2f", rightMotorSpeed));
+                }
+            });
     }
 
     public static void takePicture(Activity activity) {
