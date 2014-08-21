@@ -200,39 +200,4 @@
             android:layout_alignParentRight="true"
             android:checked="false" />
     </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/appInfoData"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="12dp"
-        android:background="@color/dark_green"
-        android:padding="5dp">
-
-        <ImageView
-            android:id="@+id/imgInfo"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="8dp"
-            android:contentDescription="@string/desc_info"
-            android:src="@drawable/information" />
-
-        <TextView
-            android:id="@+id/softwareInfoData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_toRightOf="@id/imgInfo"
-            android:text="@string/info_softwareData" />
-
-        <TextView
-            android:id="@+id/hardwareInfoData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/softwareInfoData"
-            android:layout_toRightOf="@id/imgInfo"
-            android:text="@string/info_hardwareData" />
-    </RelativeLayout>
 </RelativeLayout>
