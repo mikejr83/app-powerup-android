@@ -30,7 +30,6 @@ package com.tobyrich.app.SmartPlane;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.monstarmike.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
@@ -78,7 +77,7 @@ public class BluetoothDelegate
     private Activity activity;
     private String idName;
 
-    private Long systemID = null;
+    private String systemID = null;
 
     private boolean isConnected = false;
 
@@ -156,16 +155,16 @@ public class BluetoothDelegate
         final String hardwareDataInfo = "Hardware: " + serialNumber;
 
         Log.d(TAG, hardwareDataInfo);
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ((TextView) activity.findViewById(R.id.hardwareInfoData)).setText(hardwareDataInfo);
-            }
-        });
+//        activity.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                ((TextView) activity.findViewById(R.id.hardwareInfoData)).setText(hardwareDataInfo);
+//            }
+//        });
     }
 
     @Override
-    public void didUpdateSystemID(BLEDeviceInformationService device, Long systemID) {
+    public void didUpdateSystemID(BLEDeviceInformationService device, String systemID) {
         final String systemIDMsg = "System ID: " + systemID;
 
         Log.d(TAG, systemIDMsg);
@@ -309,13 +308,13 @@ public class BluetoothDelegate
         deviceInfoService = null;
         this.isConnected = false;
         // if the smartplane is disconnected, show hardware as "unknown"
-        final String hardwareDataInfo = "Hardware: unknown";
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ((TextView) activity.findViewById(R.id.hardwareInfoData)).setText(hardwareDataInfo);
-            }
-        });
+//        final String hardwareDataInfo = "Hardware: unknown";
+//        activity.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                ((TextView) activity.findViewById(R.id.hardwareInfoData)).setText(hardwareDataInfo);
+//            }
+//        });
         if (this.planeState.isMultipleModulesEnabled()) {
             Util.showSearching(activity, this.idName, true);
         } else {
