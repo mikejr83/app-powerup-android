@@ -78,6 +78,8 @@ public class BluetoothDelegate
     private Activity activity;
     private String idName;
 
+    private Long systemID = null;
+
     private boolean isConnected = false;
 
     public BluetoothDelegate(Activity activity, String idName) {
@@ -163,6 +165,14 @@ public class BluetoothDelegate
     }
 
     @Override
+    public void didUpdateSystemID(BLEDeviceInformationService device, Long systemID) {
+        final String systemIDMsg = "System ID: " + systemID;
+
+        Log.d(TAG, systemIDMsg);
+        this.systemID = systemID;
+    }
+
+    @Override
     public void didUpdateBatteryLevel(float percent) {
         Log.i(TAG, "did update battery level - " + this.idName);
         final float R_batt = 0.520f;  // Ohm
@@ -230,6 +240,7 @@ public class BluetoothDelegate
         if (serviceName.equalsIgnoreCase("devinfo")) { // check for devinfo service
             deviceInfoService = (BLEDeviceInformationService) service;
             deviceInfoService.delegate = new WeakReference<BLEDeviceInformationService.Delegate>(this);
+
             this.handle();
             return;
         }
