@@ -160,9 +160,13 @@ public class MeteoTask extends AsyncTask<Void, Void, MeteoData> {
             weather_message = "Weather center unavailable.\n(no internet connection)";
         }
 
-        TextView weather_data = (TextView) activity.findViewById(R.id.weather_data);
-        weather_data.setText(weather_message);
-        weather_data.setVisibility(View.VISIBLE);
-        activity.findViewById(R.id.weatherProgressBar).setVisibility(View.GONE);
+        if (activity != null) {
+            TextView weather_data = (TextView) activity.findViewById(R.id.weather_data);
+            if (weather_data != null) {
+                weather_data.setText(weather_message);
+                weather_data.setVisibility(View.VISIBLE);
+                activity.findViewById(R.id.weatherProgressBar).setVisibility(View.GONE);
+            }
+        }
     }
 }
