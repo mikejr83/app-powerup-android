@@ -52,7 +52,6 @@ import android.view.ViewTreeObserver;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.monstarmike.PowerUp.R;
@@ -300,7 +299,7 @@ public class FullscreenActivity extends Activity {
             e.printStackTrace();
         }
 
-        ((TextView) findViewById(R.id.softwareInfoData)).setText("Software: " + appVersion);
+//        ((TextView) findViewById(R.id.softwareInfoData)).setText("Software: " + appVersion);
 
         /* setting the switch listeners */
         final Switch rudderReverse = (Switch) findViewById(R.id.rudderSwitch);
