@@ -119,14 +119,27 @@ public class FullscreenActivity extends Activity {
 
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
+        ImageView slider = (ImageView) this.findViewById(R.id.throttleCursor);
+        if (slider != null) {
+            float panelHeight = this.findViewById(R.id.imgPanel).getHeight();
+            float maxCursorRange = panelHeight * Const.SCALE_FOR_CURSOR_RANGE;
+            slider.setY(maxCursorRange);
+        }
+
         // Instantiate a ViewPager and a PagerAdapter
         ViewPager screenPager = (ViewPager) findViewById(R.id.screenPager);
         screenPager.setAdapter(new ScreenSlideAdapter());
 
-        CirclePageIndicator screenIndicator =
-                (CirclePageIndicator) findViewById(R.id.screenIndicator);
+        CirclePageIndicator screenIndicator = null;
 
-        screenIndicator.setViewPager(screenPager);
+        try {
+            screenIndicator =
+                    (CirclePageIndicator) findViewById(R.id.screenIndicator);
+
+            screenIndicator.setViewPager(screenPager);
+        } catch (Exception e) {
+
+        }
 
         screenPager.setCurrentItem(1);  // horizon screen
         screenPager.setOffscreenPageLimit(2);
@@ -372,15 +385,20 @@ public class FullscreenActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 planeState.setMultipleModulesEnabled(isChecked);
 
+                if (flAssistSwitch != null)
+                    flAssistSwitch.setEnabled(!isChecked);
+
                 if (isChecked) {
                     Util.inform(activity, "Turn on the left module then click the left bind button.");
 
                     multipleModButtonLayout.setVisibility(View.VISIBLE);
                     multipleModeRudderLayout.setVisibility(View.VISIBLE);
                     Log.i(TAG, "Closing the bluetoothLeftModule.");
-                    delegateCollection.getLeftDelegate().close();
 
-                    delegateCollection.removeDelegate(delegateCollection.getLeftDelegate());
+                    if (delegateCollection.getLeftDelegate() != null) {
+                        delegateCollection.getLeftDelegate().close();
+                        delegateCollection.removeDelegate(delegateCollection.getLeftDelegate());
+                    }
                 } else {
                     multipleModButtonLayout.setVisibility(View.GONE);
                     multipleModeRudderLayout.setVisibility(View.GONE);
