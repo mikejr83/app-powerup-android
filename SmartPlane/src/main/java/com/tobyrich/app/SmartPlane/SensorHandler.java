@@ -158,12 +158,17 @@ public class SensorHandler implements SensorEventListener {
         if (this.planeState.isMultipleModulesEnabled()) {
             float motorSpeed = planeState.getAdjustedMotorSpeed() * Const.MAX_MOTOR_SPEED;
 
-            if (newRudder < 0) {
-                float newMotorSpeed = motorSpeed - (motorSpeed * (rollAngle / Const.ROLL_PERCENTAGE_CONVERSION));
-                Util.showMotorDiagnostics(activity, motorSpeed, newMotorSpeed);
-            } else if (newRudder > 0) {
-                float newMotorSpeed = motorSpeed + (motorSpeed * (rollAngle / Const.ROLL_PERCENTAGE_CONVERSION));
-                Util.showMotorDiagnostics(activity, newMotorSpeed, motorSpeed);
+            if (planeState.isMotorSpeedUsedForRudder()) {
+
+                if (newRudder < 0) {
+                    float newMotorSpeed = motorSpeed - (motorSpeed * (rollAngle / Const.ROLL_PERCENTAGE_CONVERSION));
+                    Util.showMotorDiagnostics(activity, motorSpeed, newMotorSpeed);
+                } else if (newRudder > 0) {
+                    float newMotorSpeed = motorSpeed + (motorSpeed * (rollAngle / Const.ROLL_PERCENTAGE_CONVERSION));
+                    Util.showMotorDiagnostics(activity, newMotorSpeed, motorSpeed);
+                }
+            } else {
+                Util.showMotorDiagnostics(activity, motorSpeed, motorSpeed);
             }
 
             /*
@@ -174,6 +179,7 @@ public class SensorHandler implements SensorEventListener {
             if (this.delegateCollection.getLeftDelegate() != null &&
                     this.delegateCollection.getRightDelegate() != null &&
                     planeState.isMotorSpeedUsedForRudder()) {
+
                 BLESmartplaneService leftService = this.delegateCollection.getLeftDelegate().getSmartplaneService();
                 BLESmartplaneService rightService = this.delegateCollection.getRightDelegate().getSmartplaneService();
 

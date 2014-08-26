@@ -36,7 +36,7 @@ public class BindingButtonChangeHandlers implements CompoundButton.OnCheckedChan
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+    public synchronized void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         switch (compoundButton.getId()) {
             case R.id.bindLeftButton:
                 this.handleLeftButtonChanged(b);
@@ -44,6 +44,10 @@ public class BindingButtonChangeHandlers implements CompoundButton.OnCheckedChan
 
             case R.id.bindRightButton:
                 this.handleRightButtonChanged(b);
+                break;
+
+            default:
+                Log.w(TAG, "Compound Button ID: " + new Integer(compoundButton.getId()).toString());
                 break;
         }
     }
@@ -58,10 +62,16 @@ public class BindingButtonChangeHandlers implements CompoundButton.OnCheckedChan
             Log.d(TAG, "Bind left button changed. b: true");
             this.delegateCollection.setLeftDelegate(new BluetoothDelegate(activity, Const.MODULE_ONE_NAME));
 
-            activity.findViewById(R.id.bindRightButton).setEnabled(false);
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    activity.findViewById(R.id.bindRightButton).setEnabled(false);
+                }
+            });
+
             this.delegateCollection.getLeftDelegate().setOnFoundListener(new WeakReference<BluetoothDelegate.OnFoundListener>(new BluetoothDelegate.OnFoundListener() {
                 @Override
-                public void onFound() {
+                public synchronized void onFound() {
                     Log.d(TAG, "Left module has been found. Going to enable the right module binding button.");
 
                     activity.runOnUiThread(new Runnable() {
