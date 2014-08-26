@@ -65,6 +65,13 @@
     <string name="label_diag_azimuth_text">Azimuth</string>
     <string name="label_diag_left_motor">Left Motor</string>
     <string name="label_diag_right_motor">Right Motor</string>
+    <string name="label_diag_left_system_id">Left Module Serial</string>
+    <string name="label_diag_right_system_id">Right Module Serial</string>
+    <string name="label_diag_left_battery">Left Battery</string>
+    <string name="label_diag_right_battery">Right Battery</string>
+    <string name="label_diag_software_version">Software Version</string>
+    <string name="label_diag_left_hw_version">Left Module HW. Version</string>
+    <string name="label_diag_right_hw_version">Right Module HW. Version</string>
 
     <!-- Checklist items -->
     <string name="checklist_title">Flight checklist</string>

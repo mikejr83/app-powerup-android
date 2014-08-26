@@ -30,6 +30,7 @@ package com.tobyrich.app.SmartPlane;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.monstarmike.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
@@ -123,6 +124,7 @@ public class BluetoothDelegate
      * Disconnects from the bluetooth device represented by this delegate.
      */
     public void disconnect() {
+        if (device == null) return;
         device.disconnect();
     }
 
@@ -155,12 +157,16 @@ public class BluetoothDelegate
         final String hardwareDataInfo = "Hardware: " + serialNumber;
 
         Log.d(TAG, hardwareDataInfo);
-//        activity.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                ((TextView) activity.findViewById(R.id.hardwareInfoData)).setText(hardwareDataInfo);
-//            }
-//        });
+        final String idName = this.idName;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (idName.equalsIgnoreCase(Const.MODULE_ONE_NAME))
+                    ((TextView) activity.findViewById(R.id.diag_left_hw_val)).setText(hardwareDataInfo);
+                else if (idName.equalsIgnoreCase(Const.MODULE_TWO_NAME))
+                    ((TextView) activity.findViewById(R.id.diag_right_hw_val)).setText(hardwareDataInfo);
+            }
+        });
     }
 
     @Override
@@ -169,6 +175,19 @@ public class BluetoothDelegate
 
         Log.d(TAG, systemIDMsg);
         this.systemID = systemID;
+
+        final String idName = this.idName;
+        final String sysID = systemID;
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (idName.equalsIgnoreCase(Const.MODULE_ONE_NAME))
+                    ((TextView) activity.findViewById(R.id.diag_left_system_id_val_txt)).setText(sysID);
+                else if (idName.equalsIgnoreCase(Const.MODULE_TWO_NAME))
+                    ((TextView) activity.findViewById(R.id.diag_right_system_id_val_txt)).setText(sysID);
+            }
+        });
     }
 
     @Override
@@ -190,11 +209,23 @@ public class BluetoothDelegate
         if (adjustedPercent > 100)
             adjustedPercent = 100;
 
+        final String adjPercentStr = new Integer(adjustedPercent).toString() + "%";
+
         activity.runOnUiThread(new BatteryLevelUIChanger(activity, adjustedPercent));
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (idName.equalsIgnoreCase(Const.MODULE_ONE_NAME))
+                    ((TextView) activity.findViewById(R.id.diag_left_battery_val_txt)).setText(adjPercentStr);
+                else if (idName.equalsIgnoreCase(Const.MODULE_TWO_NAME))
+                    ((TextView) activity.findViewById(R.id.diag_right_battery_val_txt)).setText(adjPercentStr);
+            }
+        });
     }
 
     @Override
-    public void didStartService(BluetoothDevice device, String serviceName, BLEService service) {
+    public synchronized void didStartService(BluetoothDevice device, String serviceName, BLEService service) {
         Log.i(TAG, this.idName + " - did start service: " + service.toString());
         Log.d(TAG, this.idName + " - service name: " + serviceName);
         // We are no longer "searching" for the device
@@ -214,7 +245,7 @@ public class BluetoothDelegate
             smartplaneService = (BLESmartplaneService) service;
             smartplaneService.delegate = new WeakReference<BLESmartplaneService.Delegate>(this);
 
-            activity.runOnUiThread(new ChargeStatusTextChanger(activity, Const.IS_NOT_CHARGING));
+            //activity.runOnUiThread(new ChargeStatusTextChanger(activity, Const.IS_NOT_CHARGING));
 
             // if disconnected, or not initialized
             if (timer == null) {
@@ -308,13 +339,17 @@ public class BluetoothDelegate
         deviceInfoService = null;
         this.isConnected = false;
         // if the smartplane is disconnected, show hardware as "unknown"
-//        final String hardwareDataInfo = "Hardware: unknown";
-//        activity.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                ((TextView) activity.findViewById(R.id.hardwareInfoData)).setText(hardwareDataInfo);
-//            }
-//        });
+        final String hardwareDataInfo = "Hardware: unknown";
+        final String idName = this.idName;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (idName.equalsIgnoreCase(Const.MODULE_ONE_NAME))
+                    ((TextView) activity.findViewById(R.id.diag_left_hw_val)).setText(hardwareDataInfo);
+                else if (idName.equalsIgnoreCase(Const.MODULE_TWO_NAME))
+                    ((TextView) activity.findViewById(R.id.diag_right_hw_val)).setText(hardwareDataInfo);
+            }
+        });
         if (this.planeState.isMultipleModulesEnabled()) {
             Util.showSearching(activity, this.idName, true);
         } else {

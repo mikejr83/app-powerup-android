@@ -1,0 +1,251 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fullscreen_content"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".FullscreenActivity">
+
+    <RelativeLayout
+        android:id="@+id/controlPanel"
+        android:layout_width="fill_parent"
+        android:layout_height="342dp"
+        android:layout_alignParentBottom="true">
+
+        <ImageView
+            android:id="@+id/imgPanel"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/desc_imgPanel"
+            android:scaleType="centerCrop"
+            android:src="@drawable/panel_640x342" />
+
+
+        <ImageView
+            android:id="@+id/imgThrottleNeedle"
+            android:layout_width="150dp"
+            android:layout_height="141dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="75dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/desc_throttleNeedle"
+            android:rotation="-140"
+            android:src="@drawable/needle_right_circle_up" />
+
+        <ImageView
+            android:id="@+id/imgFuelNeedle"
+            android:layout_width="150dp"
+            android:layout_height="141dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="47dp"
+            android:layout_marginTop="60dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/desc_fuelNeedle"
+            android:rotation="-90"
+            android:src="@drawable/needle_right_circle_up" />
+
+        <ImageView
+            android:id="@+id/imgSignalNeedle"
+            android:layout_width="110dp"
+            android:layout_height="101dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="43dp"
+            android:layout_marginTop="193dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/desc_signalNeedle"
+            android:rotation="0"
+            android:src="@drawable/needle_right_circle_up" />
+
+        <TextView
+            android:id="@+id/throttleValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="40dp"
+            android:layout_marginLeft="147dp"
+            android:text="@string/zero_percent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold|normal" />
+
+        <TextView
+            android:id="@+id/signalValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="70dp"
+            android:layout_marginRight="140dp"
+            android:singleLine="false"
+            android:text="@string/minus_infinity"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold|normal" />
+
+        <TextView
+            android:id="@+id/textSignal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="110dp"
+            android:layout_marginRight="110dp"
+            android:text="@string/label_signal"
+            android:textColor="#BBCC00"
+            android:textSize="24sp"
+            android:textStyle="bold|normal"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/batteryLevelText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="114dp"
+            android:layout_marginTop="144dp"
+            android:singleLine="false"
+            android:text="@string/not_available"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold|normal" />
+
+        <TextView
+            android:id="@+id/textDBM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="40dp"
+            android:layout_marginRight="120dp"
+            android:text="@string/label_signalStrength"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/textFuel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/textBattery"
+            android:layout_marginRight="95dp"
+            android:text="@string/label_fuel"
+            android:textColor="#BBCC00"
+            android:textSize="24sp"
+            android:textStyle="bold|normal"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/textBattery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="65dp"
+            android:layout_marginTop="3dp"
+            android:text="@string/label_battery"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#BBCC00"
+            android:textSize="26sp"
+            android:textStyle="bold|normal"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/textHDG"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="80dp"
+            android:text="@string/label_compass"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#BBCC00"
+            android:textSize="12sp"
+            android:textStyle="bold|normal" />
+
+        <ImageView
+            android:id="@+id/lockThrottle"
+            android:layout_width="200dp"
+            android:layout_height="145dp"
+            android:layout_alignBottom="@id/textDBM"
+            android:layout_alignEnd="@id/textFuel"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="-10dp"
+            android:layout_toRightOf="@id/textBattery"
+            android:contentDescription="@string/desc_throttleLock"
+            android:src="@drawable/throttle_locked"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/throttleCursor"
+            android:layout_width="110dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="262dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/desc_throttleSlider"
+            android:longClickable="false"
+            android:scaleType="fitCenter"
+            android:src="@drawable/throttle_slider" />
+
+        <TextView
+            android:id="@+id/batteryStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/textBattery"
+            android:layout_below="@id/textBattery"
+            android:layout_marginLeft="45dp"
+            android:text="@string/not_available"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="13sp"
+            android:textStyle="bold|normal" />
+
+        <TextView
+            android:id="@+id/hdgValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/textHDG"
+            android:layout_alignTop="@id/textHDG"
+            android:layout_marginLeft="60dp"
+            android:text="@string/not_available"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold|normal" />
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/controlPanel">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/screenPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.viewpagerindicator.CirclePageIndicator
+                android:id="@+id/screenIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
+                android:padding="10dip" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imgHorizonCover"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right|center_vertical"
+            android:contentDescription="@string/desc_horizonBorder"
+            android:scaleType="fitXY"
+            android:src="@drawable/cover" />
+
+    </FrameLayout>
+
+
+</RelativeLayout>

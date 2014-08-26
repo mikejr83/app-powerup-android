@@ -86,10 +86,15 @@ public class BluetoothDelegateCollection implements Iterable<BluetoothDelegate> 
      * @param bluetoothDelegate BluetoothDelegate to remove from the collection.
      */
     public void removeDelegate(BluetoothDelegate bluetoothDelegate) {
+        if (bluetoothDelegate == null) return;
+
+        bluetoothDelegate.disconnect();
+
         if (this.leftDelegate == bluetoothDelegate)
             this.leftDelegate = null;
         if (this.rightDelegate == bluetoothDelegate)
             this.rightDelegate = null;
+
         this.bluetoothDelegates.remove(bluetoothDelegate);
     }
 
