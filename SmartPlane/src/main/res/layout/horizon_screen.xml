@@ -3,8 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/artificialHorizon"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_above="@id/controlPanel">
+    android:layout_height="fill_parent">
 
     <FrameLayout
         android:layout_width="fill_parent"
@@ -100,8 +99,8 @@
             android:id="@+id/checklist"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginBottom="15dp"
             android:layout_gravity="bottom|right"
+            android:layout_marginBottom="15dp"
             android:layout_marginRight="15dp"
             android:contentDescription="@string/desc_checklist"
             android:src="@drawable/checklist" />
@@ -115,6 +114,7 @@
             android:layout_marginTop="30dp"
             android:textColor="@color/very_dark_green"
             android:textSize="16sp"
+            android:typeface="monospace"
             android:visibility="gone" />
 
         <TextView
@@ -126,6 +126,8 @@
             android:layout_marginTop="48dp"
             android:textColor="@color/very_dark_green"
             android:textSize="16sp"
+            android:typeface="monospace"
             android:visibility="gone" />
+
     </FrameLayout>
 </RelativeLayout>

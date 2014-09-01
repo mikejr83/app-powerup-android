@@ -1,20 +1,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fullscreen_content"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context=".FullscreenActivity">
 
     <RelativeLayout
         android:id="@+id/controlPanel"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="190dp"
         android:layout_alignParentBottom="true">
 
         <ImageView
             android:id="@+id/imgPanel"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/desc_imgPanel"
@@ -182,20 +182,20 @@
 
         <ImageView
             android:id="@+id/throttleCursor"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@id/textSignal"
             android:layout_marginBottom="5dp"
-            android:layout_marginTop="40dp"
-            android:contentDescription="@string/desc_throttleSlider"
-            android:scaleType="fitCenter"
-            android:src="@drawable/throttle_slider"
-            android:adjustViewBounds="true"
-            android:longClickable="false"
-            android:baselineAlignBottom="false"
-            android:paddingLeft="20dp"
-            android:layout_toLeftOf="@id/textSignal"
             android:layout_marginLeft="120dp"
-            android:layout_alignTop="@id/textSignal" />
+            android:layout_marginTop="40dp"
+            android:layout_toLeftOf="@id/textSignal"
+            android:adjustViewBounds="true"
+            android:baselineAlignBottom="false"
+            android:contentDescription="@string/desc_throttleSlider"
+            android:longClickable="false"
+            android:paddingLeft="20dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/throttle_slider" />
 
         <TextView
             android:id="@+id/batteryStatus"
@@ -225,8 +225,8 @@
     </RelativeLayout>
 
     <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_above="@id/controlPanel">
 
         <RelativeLayout
@@ -244,18 +244,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="7dp"
                 android:padding="10dip" />
         </RelativeLayout>
 
         <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="-25dp"
+            android:alpha="0.6"
+            android:contentDescription="@string/desc_shadow_cover"
+            android:scaleType="fitXY"
+            android:src="@drawable/shadow_cover" />
+
+        <ImageView
             android:id="@+id/imgHorizonCover"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="right|center_vertical"
             android:contentDescription="@string/desc_horizonBorder"
             android:scaleType="fitXY"
             android:src="@drawable/cover" />
+
 
     </FrameLayout>
 

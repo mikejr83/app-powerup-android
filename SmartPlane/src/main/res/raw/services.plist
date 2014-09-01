@@ -66,6 +66,22 @@
 				<string>86C3810E-0040-40D9-A117-26B300768CD6</string>
 			</dict>
 		</dict>
+        <key>firmware</key>
+        <dict>
+            <key>UUID</key>
+            <string>f000ffc0-0451-4000-b000-000000000000</string>
+            <key>Primary</key>
+            <true/>
+            <key>DriverClass</key>
+            <string>UNUSED</string>
+            <key>Fields</key>
+            <dict>
+                <key>imgidentify</key>
+                <string>f000ffc1-0451-4000-b000-000000000000</string>
+                <key>blockrequest</key>
+                <string>f000ffc2-0451-4000-b000-000000000000</string>
+            </dict>
+        </dict>
 	</dict>
 </dict>
 </plist>
