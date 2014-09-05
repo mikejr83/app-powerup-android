@@ -30,6 +30,7 @@ package com.tobyrich.app.SmartPlane;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.monstarmike.PowerUp.R;
@@ -216,10 +217,20 @@ public class BluetoothDelegate
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                if(idName == null) return;
+
+                int id = -1;
+
                 if (idName.equalsIgnoreCase(Const.MODULE_ONE_NAME))
-                    ((TextView) activity.findViewById(R.id.diag_left_battery_val_txt)).setText(adjPercentStr);
+                    id = R.id.diag_left_battery_val_txt;
                 else if (idName.equalsIgnoreCase(Const.MODULE_TWO_NAME))
-                    ((TextView) activity.findViewById(R.id.diag_right_battery_val_txt)).setText(adjPercentStr);
+                    id = R.id.diag_right_battery_val_txt;
+
+                View view = activity.findViewById(id);
+
+                if(view != null)
+                    ((TextView) view).setText(adjPercentStr);
             }
         });
     }
