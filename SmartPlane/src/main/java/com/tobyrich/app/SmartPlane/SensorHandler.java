@@ -43,6 +43,8 @@ import com.tobyrich.app.SmartPlane.util.Const;
 import com.tobyrich.app.SmartPlane.util.SmoothingEngine;
 import com.tobyrich.app.SmartPlane.util.Util;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import lib.smartlink.driver.BLESmartplaneService;
 
 /**
@@ -223,7 +225,11 @@ public class SensorHandler implements SensorEventListener {
             if (smartplaneService != null) {
                 short rudderVal = (short) (planeState.isRudderReversed() ? -newRudder : newRudder);
 
-                smartplaneService.setRudder(rudderVal);
+                try {
+                    smartplaneService.setRudder(rudderVal);
+                } catch (RejectedExecutionException e) {
+                    Log.e(TAG, "OMG during setting the rudder! " + e.toString());
+                }
             }
 
             horizonImage.setRotation(-rollAngle);
