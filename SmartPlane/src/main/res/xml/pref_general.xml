@@ -1,0 +1,20 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="general_reverse_rudder"
+        android:title="@string/pref_title_revRudder"
+        android:summary="@string/pref_description_social_recommendations"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="general_flight_assist"
+        android:title="@string/pref_title_flightAssist"
+        android:summary="@string/pref_description_social_recommendations"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="general_atc_tower"
+        android:title="@string/pref_title_revRudder"
+        android:summary="@string/pref_description_social_recommendations"
+        android:defaultValue="false" />
+</PreferenceScreen>

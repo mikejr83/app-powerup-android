@@ -1,0 +1,13 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="com.tobyrich.app.SmartPlane.SettingsActivity$GeneralPreferenceFragment"
+        android:title="@string/pref_header_general" />
+
+    <header
+        android:fragment="com.tobyrich.app.SmartPlane.SettingsActivity$MultipleModulesPreferenceFragment"
+        android:title="@string/pref_header_multiple_modules" />
+
+</preference-headers>

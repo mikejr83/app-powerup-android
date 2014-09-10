@@ -298,6 +298,17 @@ public class FullscreenActivity extends Activity {
             }
         });
 
+
+        final Activity activity = this;
+
+        final ImageView settings_vw = (ImageView) findViewById(R.id.settings);
+        settings_vw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settingsIntent = new Intent(activity, SettingsActivity.class);
+                activity.startActivity(settingsIntent);
+            }
+        });
     }
 
     public void initializeSettingsScreen() {
