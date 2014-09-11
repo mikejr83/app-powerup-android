@@ -2,15 +2,15 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="pref_multiple_mod"
-        android:summary="@string/pref_title_multiple_modules"
-        android:title="@string/pref_summary_multiple_modules"  />
+        android:key="pref_multiple_modules"
+        android:summary="@string/pref_summary_multiple_modules_disabled"
+        android:title="@string/pref_title_multiple_modules"  />
 
     <CheckBoxPreference
-        android:dependency="pref_multiple_mod"
-        android:key="pref_multiple_mod_use_motors_yaw"
+        android:dependency="pref_multiple_modules"
+        android:key="pref_multiple_modules_motor_yaw"
         android:title="@string/pref_title_multiple_modules_yaw"
-        android:summary="@string/pref_summary_multiple_modules_yaw"
+        android:summary="@string/pref_summary_multiple_modules_motor_yaw_enabled"
         android:defaultValue="true" />
 
 </PreferenceScreen>

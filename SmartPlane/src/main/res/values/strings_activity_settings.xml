@@ -6,17 +6,29 @@
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 
+    <!-- Titles -->
     <string name="pref_title_revRudder">Reverse Rudder</string>
-
     <string name="pref_title_flightAssist">Flight Assist</string>
-
+    <string name="pref_title_atctower">ATC Tower</string>
+    <string name="pref_title_multiple_modules">Multiple Modules</string>
+    <string name="pref_title_multiple_modules_yaw">Use Motors As Rudders</string>
     <string name="pref_title_weatherCenter">Weather Center</string>
 
-    <string name="pref_summary_multiple_modules">Enable the use of multiple bluetooth modules.</string>
-    <string name="pref_title_multiple_modules">Multiple Modules Enabled</string>
+    <!-- Summaries -->
+    <string name="pref_summary_reverse_rudder_disabled">Use normal rudder direction.</string>
+    <string name="pref_summary_reverse_rudder_enabled">Reverse rudder direction.</string>
 
-    <string name="pref_summary_multiple_modules_yaw">Vary the speed of each module to control yaw.</string>
-    <string name="pref_title_multiple_modules_yaw">Use Motors As Rudders</string>
+    <string name="pref_summary_flight_assist_disabled">Keep motor speed constant when turning.</string>
+    <string name="pref_summary_flight_assist_enabled">Increase motor speed during turns.</string>
+
+    <string name="pref_summary_atc_tower_disabled">Use normal rudder direction.</string>
+    <string name="pref_summary_atc_tower_enabled">Reverse rudder direction.</string>
+
+    <string name="pref_summary_multiple_modules_disabled">Bind to only one PowerUp module.</string>
+    <string name="pref_summary_multiple_modules_enabled">Bind to multiple PowerUp modules.</string>
+
+    <string name="pref_summary_multiple_modules_motor_yaw_disabled">Use constant speed for each module\'s motor.</string>
+    <string name="pref_summary_multiple_modules_motor_yaw_enabled">Vary the speed of each module to control yaw.</string>
 
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact based on your message history</string>
