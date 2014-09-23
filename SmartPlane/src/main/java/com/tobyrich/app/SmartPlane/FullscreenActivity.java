@@ -142,7 +142,7 @@ public class FullscreenActivity extends Activity {
         }
 
         screenPager.setCurrentItem(1);  // horizon screen
-        screenPager.setOffscreenPageLimit(2);
+        screenPager.setOffscreenPageLimit(NUM_SCREENS - 1);
 
         buttonConfig = this.getSharedPreferences("button_config", MODE_PRIVATE);
     }
