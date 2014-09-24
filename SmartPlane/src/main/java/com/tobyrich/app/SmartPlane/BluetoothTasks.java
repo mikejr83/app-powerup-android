@@ -65,7 +65,7 @@ public class BluetoothTasks {
 
             BluetoothDevice dev = weakDevice.get();
             if (dev != null) {
-                weakDevice.get().updateSignalStrength();
+                dev.updateSignalStrength();
             }
         }
     }
