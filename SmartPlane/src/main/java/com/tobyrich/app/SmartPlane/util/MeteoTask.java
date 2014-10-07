@@ -41,11 +41,19 @@ public class MeteoTask extends AsyncTask<Void, Void, MeteoData> {
 
     @Override
     public void onPreExecute() {
-        activity.findViewById(R.id.weather_data).setVisibility(View.GONE);
-        activity.findViewById(R.id.weatherProgressBar).setVisibility(View.VISIBLE);
+        View weatherData = activity.findViewById(R.id.weather_data);
+        if (weatherData != null)
+            weatherData.setVisibility(View.GONE);
+        View weatherProgressBar = activity.findViewById(R.id.weatherProgressBar);
+        if (weatherProgressBar != null)
+            weatherProgressBar.setVisibility(View.VISIBLE);
 
-        activity.findViewById(R.id.horizon_wind_txt).setVisibility(View.GONE);
-        activity.findViewById(R.id.horizon_temp_txt).setVisibility(View.GONE);
+        View horizonWindTxt = activity.findViewById(R.id.horizon_wind_txt);
+        if (horizonWindTxt != null)
+            horizonWindTxt.setVisibility(View.GONE);
+        View horizonTempTxt = activity.findViewById(R.id.horizon_temp_txt);
+        if (horizonTempTxt != null)
+            horizonTempTxt.setVisibility(View.GONE);
     }
 
     @Override
