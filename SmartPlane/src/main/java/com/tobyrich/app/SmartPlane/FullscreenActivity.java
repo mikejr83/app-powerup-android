@@ -40,6 +40,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -49,10 +50,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Switch;
-import android.widget.ToggleButton;
 
 import com.monstarmike.PowerUp.R;
 import com.tobyrich.app.SmartPlane.util.Const;
@@ -76,6 +74,8 @@ public class FullscreenActivity extends Activity {
     @SuppressWarnings("FieldCanBeLocal")
     private static final int NUM_SCREENS = 4;
 
+    private ViewPager screenPager;
+
     private boolean[] initializedScreen = {false, false, false, false};
 
     // sound played when the user presses the "Control Tower" button
@@ -89,11 +89,13 @@ public class FullscreenActivity extends Activity {
     private PlaneState planeState;  // singleton with variables used app-wide
 
     private AudioManager audioManager;
-    private SharedPreferences buttonConfig;  // cached button configuration
 
     @Override
     public void onResume() {
         super.onResume();
+
+        this.setupMultipleModules();
+        this.setupTower();
 
         // The resolution might have changed while the app was paused
         ViewTreeObserver viewTree = findViewById(R.id.controlPanel).getViewTreeObserver();
@@ -101,6 +103,11 @@ public class FullscreenActivity extends Activity {
 
         if (sensorHandler != null) {
             sensorHandler.registerListener();
+        }
+
+        if (screenPager != null) {
+            screenPager.setAdapter(new ScreenSlideAdapter());
+            screenPager.setCurrentItem(1);  // horizon screen
         }
     }
 
@@ -127,7 +134,7 @@ public class FullscreenActivity extends Activity {
         }
 
         // Instantiate a ViewPager and a PagerAdapter
-        ViewPager screenPager = (ViewPager) findViewById(R.id.screenPager);
+        screenPager = (ViewPager) findViewById(R.id.screenPager);
         screenPager.setAdapter(new ScreenSlideAdapter());
 
         CirclePageIndicator screenIndicator = null;
@@ -143,8 +150,6 @@ public class FullscreenActivity extends Activity {
 
         screenPager.setCurrentItem(1);  // horizon screen
         screenPager.setOffscreenPageLimit(NUM_SCREENS - 1);
-
-        buttonConfig = this.getSharedPreferences("button_config", MODE_PRIVATE);
     }
 
     @Override
@@ -298,7 +303,6 @@ public class FullscreenActivity extends Activity {
             }
         });
 
-
         final Activity activity = this;
 
         final ImageView settings_vw = (ImageView) findViewById(R.id.settings);
@@ -309,10 +313,72 @@ public class FullscreenActivity extends Activity {
                 activity.startActivity(settingsIntent);
             }
         });
+
+        this.setupTower();
     }
 
-    public void initializeSettingsScreen() {
+//    public void initializeSettingsScreen() {
+//        this.setupMultipleModules();
+//
+//        final ToggleButton bindLeftBtn = (ToggleButton) findViewById(R.id.bindLeftButton);
+//        final ToggleButton bindRightBtn = (ToggleButton) findViewById(R.id.bindRightButton);
+//
+//        BindingButtonChangeHandlers btnChngHndlrs = new BindingButtonChangeHandlers(this, this.delegateCollection);
+//        bindLeftBtn.setOnCheckedChangeListener(btnChngHndlrs);
+//        bindRightBtn.setOnCheckedChangeListener(btnChngHndlrs);
+//    }  // end initializeSettintsScreen()
+
+    private void setupMultipleModules() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        final ViewGroup multipleModButtonLayout = (ViewGroup) findViewById(R.id.multiple_mod_buttons_item);
+        final ViewGroup multipleModeRudderLayout = (ViewGroup) findViewById(R.id.multiple_mod_rudder_item);
+
+        if (sharedPref.getBoolean("pref_multiple_modules", true)) {
+            if (multipleModButtonLayout != null)
+                multipleModButtonLayout.setVisibility(View.VISIBLE);
+            if (multipleModeRudderLayout != null)
+                multipleModeRudderLayout.setVisibility(View.VISIBLE);
+
+            if (delegateCollection.getLeftDelegate() != null) {
+                delegateCollection.getLeftDelegate().close();
+                delegateCollection.removeDelegate(delegateCollection.getLeftDelegate());
+            }
+        } else {
+            if (multipleModButtonLayout != null)
+                multipleModButtonLayout.setVisibility(View.GONE);
+            if (multipleModeRudderLayout != null)
+                multipleModeRudderLayout.setVisibility(View.GONE);
+        }
+    }
+
+    private void setupTower() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
         final float FX_VOLUME = 10.0f;
+        audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, FX_VOLUME);
+        ImageView atcOn = (ImageView) findViewById(R.id.atcOn);
+        ImageView atcOff = (ImageView) findViewById(R.id.atcOff);
+
+        if (atcSound != null && atcSound.isPlaying()) {
+            atcSound.pause();
+        }
+
+        if ((atcOn == null) || (atcOff == null)) {
+            Log.e(TAG, "Main screen was destroyed.");
+            return;
+        }
+
+        if (sharedPref.getBoolean("general_atc_tower", true)) {
+            atcOff.setVisibility(View.VISIBLE);
+            atcOn.setVisibility(View.GONE);
+        } else {
+            atcOn.setVisibility(View.GONE);
+            atcOff.setVisibility(View.GONE);
+        }
+    }
+
+    protected void initializeDiagnosticsScreen() {
         /* setting the version data at the bottom of the screen */
         String appVersion = getString(R.string.unknown);
         try {
@@ -322,131 +388,11 @@ public class FullscreenActivity extends Activity {
             Log.e(TAG, "Could not locate package; needed to set appVersion.");
             e.printStackTrace();
         }
-
-//        ((TextView) findViewById(R.id.softwareInfoData)).setText("Software: " + appVersion);
-
-        /* setting the switch listeners */
-        final Switch rudderReverse = (Switch) findViewById(R.id.rudderSwitch);
-        rudderReverse.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, FX_VOLUME);
-                planeState.setRudderReversed(isChecked);
-
-                buttonConfig.edit().putBoolean("rudderReversed", isChecked).apply();
-            }
-        });
-
-        boolean isRudderReversed = buttonConfig.getBoolean("rudderReversed",
-                Const.DEFAULT_RUDDER_REVERSE);
-        rudderReverse.setChecked(isRudderReversed);
-
-        final Switch flAssistSwitch = (Switch) findViewById(R.id.flAssistSwitch);
-        flAssistSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, FX_VOLUME);
-                planeState.enableFlightAssist(isChecked);
-
-                buttonConfig.edit().putBoolean("flAssist", isChecked).apply();
-            }
-        });
-
-        boolean enableFlAssist = buttonConfig.getBoolean("flAssist",
-                Const.DEFAULT_FLIGHT_ASSIST);
-        flAssistSwitch.setChecked(enableFlAssist);
-
-        final Switch towerSwitch = (Switch) findViewById(R.id.towerSwitch);
-        final Switch multipleModSwitch = (Switch) findViewById(R.id.multipleModSwitch);
-        final Switch motorsForRudderSwitch = (Switch) findViewById(R.id.multiple_mod_rudder_switch);
-
-        towerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD, FX_VOLUME);
-                ImageView atcOn = (ImageView) findViewById(R.id.atcOn);
-                ImageView atcOff = (ImageView) findViewById(R.id.atcOff);
-
-                if ((atcOn == null) || (atcOff == null)) {
-                    Log.e(TAG, "Main screen was destroyed.");
-                    return;
-                }
-
-                if (atcSound != null && atcSound.isPlaying()) {
-                    atcSound.pause();
-                }
-
-                if (isChecked) {
-                    atcOff.setVisibility(View.VISIBLE);
-                    atcOn.setVisibility(View.GONE);
-                } else {
-                    atcOn.setVisibility(View.GONE);
-                    atcOff.setVisibility(View.GONE);
-                }
-
-                buttonConfig.edit().putBoolean("atcTower", isChecked).apply();
-            }  // end onCheckedChanged()
-        });
-
-        final Activity activity = this;
-        final ViewGroup multipleModButtonLayout = (ViewGroup) findViewById(R.id.multiple_mod_buttons_item);
-        final ViewGroup multipleModeRudderLayout = (ViewGroup) findViewById(R.id.multiple_mod_rudder_item);
-        multipleModSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                planeState.setMultipleModulesEnabled(isChecked);
-
-                if (flAssistSwitch != null)
-                    flAssistSwitch.setEnabled(!isChecked);
-
-                if (isChecked) {
-                    Util.inform(activity, "Turn on the left module then click the left bind button.");
-
-                    multipleModButtonLayout.setVisibility(View.VISIBLE);
-                    multipleModeRudderLayout.setVisibility(View.VISIBLE);
-                    Log.i(TAG, "Closing the bluetoothLeftModule.");
-
-                    if (delegateCollection.getLeftDelegate() != null) {
-                        delegateCollection.getLeftDelegate().close();
-                        delegateCollection.removeDelegate(delegateCollection.getLeftDelegate());
-                    }
-                } else {
-                    multipleModButtonLayout.setVisibility(View.GONE);
-                    multipleModeRudderLayout.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        motorsForRudderSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Log.i(TAG, b ? "Enabling motor speed for rudder." : "Disabling motor speed for rudder.");
-                planeState.enableMotorSpeedForRudder(b);
-            }
-        });
-
-        final ToggleButton bindLeftBtn = (ToggleButton) findViewById(R.id.bindLeftButton);
-        final ToggleButton bindRightBtn = (ToggleButton) findViewById(R.id.bindRightButton);
-
-        BindingButtonChangeHandlers btnChngHndlrs = new BindingButtonChangeHandlers(this, this.delegateCollection);
-        bindLeftBtn.setOnCheckedChangeListener(btnChngHndlrs);
-        bindRightBtn.setOnCheckedChangeListener(btnChngHndlrs);
-
-        boolean enableAtcTower = buttonConfig.getBoolean("atcTower",
-                Const.DEFAULT_ATC_TOWER);
-        towerSwitch.setChecked(enableAtcTower);
-
-        boolean enableMultipleMod = buttonConfig.getBoolean("multipleMod",
-                Const.DEFAULT_MULTIPLE_MOD);
-        multipleModSwitch.setChecked(enableMultipleMod);
-
-    }  // end initializeSettintsScreen()
-
-    protected void initializeDiagnosticsScreen() {
-
     }
 
     private class ScreenSlideAdapter extends PagerAdapter {
+        private static final String TAG = "FullScreenActivity ScreenSlideAdapter";
+
         @Override
         public int getCount() {
             return NUM_SCREENS;
@@ -465,7 +411,7 @@ public class FullscreenActivity extends Activity {
                     layout_id = R.layout.horizon_screen;
                     break;
                 case 2:
-                    layout_id = R.layout.plane_settings;
+                    layout_id = R.layout.activity_diagnostics;
                     break;
                 case 3:
                     layout_id = R.layout.activity_diagnostics;
@@ -492,16 +438,12 @@ public class FullscreenActivity extends Activity {
                 case 2:
                     if (!initializedScreen[2]) {
                         initializedScreen[2] = true;
-                        initializeSettingsScreen();
-                        Log.i(TAG, "initializing settings screen");
-                    }
-                    break;
-                case 3:
-                    if (!initializedScreen[3]) {
-                        initializedScreen[3] = true;
                         initializeDiagnosticsScreen();
                         Log.i(TAG, "initializing diagnostics screen");
                     }
+                    break;
+                case 3:
+
                     break;
             }
             return screen;
@@ -518,6 +460,7 @@ public class FullscreenActivity extends Activity {
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
         }
+
 
     }
 }

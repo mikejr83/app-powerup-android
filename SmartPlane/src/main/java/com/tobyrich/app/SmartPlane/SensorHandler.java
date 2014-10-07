@@ -240,7 +240,7 @@ public class SensorHandler implements SensorEventListener {
                 if (scaler > 0.3) {
                     scaler = 0.3;
                 }
-                planeState.setScaler(scaler);
+                planeState.setScalar(scaler);
 
                 float adjustedMotorSpeed = planeState.getAdjustedMotorSpeed();
                 Util.rotateImageView(throttleNeedle, adjustedMotorSpeed,

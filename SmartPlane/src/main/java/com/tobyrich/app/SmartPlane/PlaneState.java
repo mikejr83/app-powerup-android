@@ -28,6 +28,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.tobyrich.app.SmartPlane;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.tobyrich.app.SmartPlane.util.Const;
 
@@ -41,20 +43,21 @@ import com.tobyrich.app.SmartPlane.util.Const;
 /* TODO: define a better interface */
 public class PlaneState extends Application {
 
-    private boolean rudderReversed = false;
+    private static String TAG = "PlaneState";
+
+    private SharedPreferences sharedPreferences = null;
+
     private boolean screenLocked = false;
-    private boolean useMotorSpeedForRudder = false;
-    private boolean multipleModulesEnabled = false;
     private float motorSpeed;
-    private double scaler = 0;
+    private double scalar = 0;
     private boolean flAssistEnabled = false;
 
-    public double getScaler() {
-        return scaler;
+    public double getScalar() {
+        return scalar;
     }
 
-    public void setScaler(double scaler) {
-        this.scaler = scaler;
+    public void setScalar(double scalar) {
+        this.scalar = scalar;
     }
 
     /**
@@ -63,7 +66,7 @@ public class PlaneState extends Application {
      */
     public float getAdjustedMotorSpeed() {
         if (flAssistEnabled) {
-            float adjustedMotorSpeed = (float) (motorSpeed * (1 + scaler));
+            float adjustedMotorSpeed = (float) (motorSpeed * (1 + this.scalar));
             if (adjustedMotorSpeed > 1)
                 adjustedMotorSpeed = 1;
             return adjustedMotorSpeed;
@@ -78,16 +81,10 @@ public class PlaneState extends Application {
      * @return true / false for multiple modules
      */
     public boolean isMultipleModulesEnabled() {
-        return multipleModulesEnabled;
-    }
+        if (sharedPreferences == null)
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-    /**
-     * Set the multiple modules feature
-     *
-     * @param multipleModulesEnabled true / false for multiple modules
-     */
-    public void setMultipleModulesEnabled(boolean multipleModulesEnabled) {
-        this.multipleModulesEnabled = multipleModulesEnabled;
+        return sharedPreferences.getBoolean("pref_multiple_modules", false);
     }
 
     /**
@@ -96,16 +93,10 @@ public class PlaneState extends Application {
      * @return true / false for reversing the rudder
      */
     public boolean isRudderReversed() {
-        return rudderReversed;
-    }
+        if (sharedPreferences == null)
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-    /**
-     * Sets whether the rudder should be reversed.
-     *
-     * @param rudderReversed true / false for reversing the rudder
-     */
-    public void setRudderReversed(boolean rudderReversed) {
-        this.rudderReversed = rudderReversed;
+        return sharedPreferences.getBoolean("general_reverse_rudder", false);
     }
 
     /**
@@ -132,16 +123,10 @@ public class PlaneState extends Application {
      * @return true / false for using the motors for yaw control
      */
     public boolean isMotorSpeedUsedForRudder() {
-        return useMotorSpeedForRudder;
-    }
+        if (sharedPreferences == null)
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-    /**
-     * Sets whether to use the multi-modules to control yaw as a rudder
-     *
-     * @param useMotorSpeedForRudder true / false for using the motors for yaw control
-     */
-    public void enableMotorSpeedForRudder(boolean useMotorSpeedForRudder) {
-        this.useMotorSpeedForRudder = useMotorSpeedForRudder;
+        return sharedPreferences.getBoolean("pref_multiple_modules_motor_yaw", true);
     }
 
     /**
@@ -160,20 +145,10 @@ public class PlaneState extends Application {
      * @param motorSpeed Speed of motor 0 - 255.
      */
     public void setMotorSpeed(float motorSpeed) {
-        this.motorSpeed = motorSpeed;
-    }
-
-    /**
-     * Enable or disable flight assistance
-     *
-     * @param flAssistEnabled true / false for setting flight assistance
-     */
-    public void enableFlightAssist(boolean flAssistEnabled) {
-        // Cutoff speed for flight assist
-        if (!this.flAssistEnabled && motorSpeed > Const.SCALE_FASSIST_THROTTLE) {
-            motorSpeed = (float) Const.SCALE_FASSIST_THROTTLE;
-        }
-        this.flAssistEnabled = flAssistEnabled;
+        if (!this.flAssistEnabled && this.motorSpeed > Const.SCALE_FASSIST_THROTTLE) {
+            this.motorSpeed = (float) Const.SCALE_FASSIST_THROTTLE;
+        } else
+            this.motorSpeed = motorSpeed;
     }
 
     /**
@@ -182,6 +157,9 @@ public class PlaneState extends Application {
      * @return true / false for flight assist
      */
     public boolean isFlAssistEnabled() {
-        return this.flAssistEnabled;
+        if (sharedPreferences == null)
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        return sharedPreferences.getBoolean("general_flight_assist", true);
     }
 }
