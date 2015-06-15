@@ -36,3 +36,5 @@ hs_err_*.log
 
 # The build
 build/
+
+*~
