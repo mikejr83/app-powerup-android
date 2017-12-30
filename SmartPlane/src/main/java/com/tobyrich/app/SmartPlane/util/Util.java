@@ -45,6 +45,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Locale;
 
 /**
  * @author Radu Hambasan
@@ -119,7 +120,7 @@ public class Util {
         activity.findViewById(R.id.txtSearching).post(new Runnable() {
             @Override
             public void run() {
-                TextView msgSearching = null;
+                TextView msgSearching;
                 if (idName.equalsIgnoreCase(Const.MODULE_ONE_NAME))
                     msgSearching = (TextView) activity.findViewById(R.id.txtSearching);
                 else
@@ -141,7 +142,7 @@ public class Util {
                 public void run() {
                     TextView msgText = (TextView) activity.findViewById(R.id.diag_azimuth_val_txt);
                     if (msgText != null)
-                        msgText.setText(String.format("%.2f\u00B0", values[0]));
+                        msgText.setText(String.format(Locale.ROOT, "%.2f\u00B0", values[0]));
                 }
             });
 
@@ -151,7 +152,7 @@ public class Util {
                 public void run() {
                     TextView msgText = (TextView) activity.findViewById(R.id.diag_pitch_val_txt);
                     if (msgText != null)
-                        msgText.setText(String.format("%.2f\u00B0", values[1]));
+                        msgText.setText(String.format(Locale.ROOT,"%.2f\u00B0", values[1]));
                 }
             });
 
@@ -161,7 +162,7 @@ public class Util {
                 public void run() {
                     TextView msgText = (TextView) activity.findViewById(R.id.diag_roll_val_txt);
                     if (msgText != null)
-                        msgText.setText(String.format("%.2f\u00B0", values[2]));
+                        msgText.setText(String.format(Locale.ROOT,"%.2f\u00B0", values[2]));
                 }
             });
     }
@@ -175,7 +176,7 @@ public class Util {
                 public void run() {
                     TextView msgText = (TextView) activity.findViewById(R.id.diag_left_motor_val_txt);
                     if (msgText != null)
-                        msgText.setText(String.format("%.2f", motorSpeed));
+                        msgText.setText(String.format(Locale.ROOT,"%.2f", motorSpeed));
                 }
             });
 
@@ -199,7 +200,7 @@ public class Util {
                 public void run() {
                     TextView msgText = (TextView) activity.findViewById(R.id.diag_left_motor_val_txt);
                     if (msgText != null)
-                        msgText.setText(String.format("%.2f", leftMotorSpeed));
+                        msgText.setText(String.format(Locale.ROOT,"%.2f", leftMotorSpeed));
                 }
             });
 
@@ -209,7 +210,7 @@ public class Util {
                 public void run() {
                     TextView msgText = (TextView) activity.findViewById(R.id.diag_right_motor_val_txt);
                     if (msgText != null)
-                        msgText.setText(String.format("%.2f", rightMotorSpeed));
+                        msgText.setText(String.format(Locale.ROOT,"%.2f", rightMotorSpeed));
                 }
             });
     }

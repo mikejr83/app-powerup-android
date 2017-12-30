@@ -79,7 +79,7 @@ public class BluetoothDelegate
     private Activity activity;
     private String idName;
 
-    private String systemID = null;
+    private String systemID;
 
     private boolean isConnected = false;
 
@@ -139,6 +139,11 @@ public class BluetoothDelegate
         device = null;
         this.planeState = null;
         this.activity = null;
+    }
+
+    @Override
+    public void didConnect(BluetoothDevice bluetoothDevice) {
+
     }
 
     @Override
@@ -210,7 +215,7 @@ public class BluetoothDelegate
         if (adjustedPercent > 100)
             adjustedPercent = 100;
 
-        final String adjPercentStr = new Integer(adjustedPercent).toString() + "%";
+        final String adjPercentStr = Integer.valueOf(adjustedPercent).toString() + "%";
 
         activity.runOnUiThread(new BatteryLevelUIChanger(activity, adjustedPercent));
 

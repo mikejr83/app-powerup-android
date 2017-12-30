@@ -20,7 +20,7 @@ import lib.smartlink.BluetoothDisabledException;
  * Handler for button changes on the setting page.
  */
 public class BindingButtonChangeHandlers implements CompoundButton.OnCheckedChangeListener {
-    private static final String TAG = "BindingButtonChangeHandlers";
+    private static final String TAG = "BindingBtnChngHandlers";
     private FullscreenActivity activity;
     private BluetoothDelegateCollection delegateCollection;
 
@@ -47,7 +47,7 @@ public class BindingButtonChangeHandlers implements CompoundButton.OnCheckedChan
                 break;
 
             default:
-                Log.w(TAG, "Compound Button ID: " + new Integer(compoundButton.getId()).toString());
+                Log.w(TAG, "Compound Button ID: " + Integer.valueOf(compoundButton.getId()).toString());
                 break;
         }
     }
