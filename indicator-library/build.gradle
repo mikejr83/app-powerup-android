@@ -1,8 +1,7 @@
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 24
 
     defaultConfig {
         minSdkVersion 18
@@ -17,5 +16,5 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:19.1.0'
+    implementation 'com.android.support:support-v4:24.2.1'
 }
