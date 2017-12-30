@@ -1,8 +1,7 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 24
     defaultConfig {
         minSdkVersion 18
         versionCode 208
@@ -10,16 +9,15 @@ android {
     }
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            zipAlign true
         }
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:19.1.0'
-    compile project(':indicator-library')
-    compile files('libs/dd-plist.jar')
-    compile files('libs/LibSmartlink.jar')
+    implementation 'com.android.support:support-v4:24.2.1'
+    implementation project(':indicator-library')
+    implementation files('libs/dd-plist.jar')
+    implementation files('libs/LibSmartlink.jar')
 }
