@@ -7,10 +7,16 @@
     </style>
 
     <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@null</item>
         <item name="metaButtonBarStyle">@style/ButtonBar</item>
         <item name="metaButtonBarButtonStyle">@style/ButtonBarButton</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="android:Widget.Holo.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
     </style>
 
     <style name="ButtonBar">

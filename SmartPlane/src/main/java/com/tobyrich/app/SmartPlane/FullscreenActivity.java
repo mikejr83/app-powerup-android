@@ -51,6 +51,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.ToggleButton;
 
@@ -96,7 +97,8 @@ public class FullscreenActivity extends Activity {
         super.onResume();
 
         // The resolution might have changed while the app was paused
-        ViewTreeObserver viewTree = findViewById(R.id.controlPanel).getViewTreeObserver();
+        RelativeLayout controlPanelLayout = (RelativeLayout)findViewById(R.id.controlPanel);
+        ViewTreeObserver viewTree = controlPanelLayout.getViewTreeObserver();
         viewTree.addOnGlobalLayoutListener(new GlobalLayoutListener(this));
 
         if (sensorHandler != null) {

@@ -87,7 +87,7 @@ public class GestureListener extends GestureDetector.SimpleOnGestureListener {
             slider.setY(newHeight);
             Util.rotateImageView(throttleNeedle, 0, Const.THROTTLE_NEEDLE_MIN_ANGLE,
                     Const.THROTTLE_NEEDLE_MAX_ANGLE);
-            throttleText.setText("0" + "%");
+            throttleText.setText("0%");
 
             // turning the on-touch listener off
             slider.setEnabled(false);
